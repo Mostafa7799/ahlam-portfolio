@@ -142,6 +142,16 @@
       ]
     },
     {
+      "id": "cases",
+      "type": "cases",
+      "visible": true,
+      "title": {
+        "en": "Clinical Cases",
+        "ar": "حالات سريرية"
+      },
+      "items": []
+    },
+    {
       "id": "experience",
       "type": "experience",
       "visible": true,

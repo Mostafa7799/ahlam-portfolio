@@ -9,6 +9,7 @@
 
   const SECTION_TYPES = {
     services: "Services (cards)",
+    cases: "Clinical cases (photo gallery)",
     education: "Education",
     experience: "Experience",
     projects: "Projects",
@@ -18,7 +19,7 @@
     custom: "Custom (timeline)"
   };
   const SECTION_TITLES_AR = {
-    services: "الخدمات", education: "التعليم", experience: "الخبرات", projects: "المشاريع", certificates: "الشهادات",
+    services: "الخدمات", cases: "حالات سريرية", education: "التعليم", experience: "الخبرات", projects: "المشاريع", certificates: "الشهادات",
     skills: "المهارات", languages: "اللغات", custom: "قسم جديد"
   };
 
@@ -27,15 +28,22 @@
   let sha = null;           // sha of data.json on GitHub
   let dirty = false;
   let previewLang = "en";
-  let pendingPhoto = null;  // { path, dataUrl } shown in the preview until Pages rebuilds
+  let pendingImages = {};   // path -> dataUrl for uploads not yet served by Pages (used in previews)
+  let uploadedPaths = new Set(); // images uploaded in this session
+  let savedRefs = new Set();     // images referenced by the last loaded/saved data.json
+  let casePhotoTarget = null;    // images[] path the case photo picker adds to
+
+  const IMG_DIR = "assets/img/";
+  const imgSrc = (path) => pendingImages[path] || path;
 
   // ---------- helpers ----------
   const bi = () => ({ en: "", ar: "" });
   const timelineItem = () => ({ title: bi(), org: bi(), location: bi(), start: "", end: "", description: bi(), bullets: [] });
   const listItem = () => ({ name: bi(), level: bi() });
   const serviceItem = () => ({ icon: "tooth", name: bi(), description: bi() });
-  const family = (type) => (P.isCards(type) ? "cards" : P.isTimeline(type) ? "timeline" : "list");
-  const ITEM_FOR = { cards: serviceItem, timeline: timelineItem, list: listItem };
+  const caseItem = () => ({ title: bi(), category: bi(), date: "", description: bi(), images: [] });
+  const family = (type) => (type === "cases" ? "cases" : P.isCards(type) ? "cards" : P.isTimeline(type) ? "timeline" : "list");
+  const ITEM_FOR = { cards: serviceItem, timeline: timelineItem, list: listItem, cases: caseItem };
 
   // Stable keys for <details> so open/closed state survives re-renders.
   const uids = new WeakMap();
@@ -83,9 +91,22 @@
     d.sections = (d.sections || []).map((s) => {
       s.title = typeof s.title === "string" ? { en: s.title, ar: "" } : Object.assign(bi(), s.title);
       s.items = (s.items || []).map((it) => Object.assign(ITEM_FOR[family(s.type)](), it));
+      if (s.type === "cases") {
+        s.items.forEach((it) => {
+          it.images = (it.images || []).map((im) => ({ src: im.src || "", caption: Object.assign(bi(), im.caption) }));
+        });
+      }
       return s;
     });
     return d;
+  }
+
+  // All uploaded-image paths the data refers to (profile photo, case photos).
+  function collectRefs(obj, out) {
+    out = out || new Set();
+    if (typeof obj === "string") { if (obj.startsWith(IMG_DIR)) out.add(obj); }
+    else if (obj && typeof obj === "object") Object.values(obj).forEach((v) => collectRefs(v, out));
+    return out;
   }
 
   // ---------- UTF-8 safe base64 ----------
@@ -205,6 +226,7 @@
 
   function startEditor(data) {
     state = normalise(data);
+    savedRefs = collectRefs(state);
     previewLang = state.settings.defaultLanguage === "ar" ? "ar" : "en";
     $("saveBtn").textContent = auth ? "Save" : "Download data.json";
     $("logoutBtn").textContent = auth ? "Log out" : "Exit";
@@ -272,7 +294,7 @@
 
   function renderProfile() {
     const p = state.profile;
-    const photoSrc = pendingPhoto && pendingPhoto.path === p.photo ? pendingPhoto.dataUrl : p.photo;
+    const photoSrc = p.photo ? imgSrc(p.photo) : "";
     const links = (p.links || []).map((l, i) => `
       <div class="list-row">
         <input type="text" data-path="profile.links.${i}.label" value="${esc(l.label)}" placeholder="Label (e.g. LinkedIn)">
@@ -353,6 +375,35 @@
       ${biField("Short description", base + ".description", { multiline: true })}`, "item");
   }
 
+  function renderCaseItem(base, it, i, n) {
+    const imgs = it.images || [];
+    const rows = imgs.map((im, k) => `
+      <div class="img-row">
+        <img src="${esc(imgSrc(im.src))}" alt="" loading="lazy">
+        <input type="text" data-path="${base}.images.${k}.caption.en" value="${esc(im.caption.en)}" placeholder="Caption (e.g. Before)">
+        <input type="text" dir="rtl" data-path="${base}.images.${k}.caption.ar" value="${esc(im.caption.ar)}" placeholder="الوصف (مثال: قبل)">
+        <span style="display:flex;gap:4px">${controls(base + ".images." + k, k, imgs.length)}</span>
+      </div>`).join("");
+    const cover = imgs[0] ? `<img class="case-thumb" src="${esc(imgSrc(imgs[0].src))}" alt="">` : `<span class="case-thumb ph">📷</span>`;
+    const summary = `${cover}<span class="grow">${esc(P.tr(it.title, "en") || "New case")}</span>
+      <span class="hidden-tag">${imgs.length} photo${imgs.length === 1 ? "" : "s"}</span>${controls(base, i, n)}`;
+    return details(uid(it), summary, `
+      ${biField("Case title", base + ".title", { placeholder: { en: "e.g. Composite restoration of a lower molar", ar: "مثال: حشو تجميلي لضرس سفلي" } })}
+      <div class="row">
+        <div class="field"><span class="field-label">Treatment type</span><div class="bi">
+          <div class="lang-input en"><input type="text" data-path="${base}.category.en" value="${esc(it.category.en)}" placeholder="e.g. Restorative"><span class="lang-tag">EN</span></div>
+          <div class="lang-input ar"><input type="text" dir="rtl" data-path="${base}.category.ar" value="${esc(it.category.ar)}" placeholder="مثال: علاج تحفظي"><span class="lang-tag">AR</span></div>
+        </div></div>
+        ${textField("Date (optional)", base + ".date", "text", "03/2025")}
+      </div>
+      ${biField("Description (what was done, materials, result)", base + ".description", { multiline: true })}
+      <div class="field"><span class="field-label">Photos (the first photo is the cover)</span>
+        <div class="items">${rows || `<p class="hint">No photos yet.</p>`}</div>
+        <div><button class="btn btn-sm" type="button" data-act="case-photos" data-path="${base}.images">+ Add photos</button></div>
+        ${auth ? "" : `<p class="hint">Photo upload needs a GitHub token.</p>`}
+      </div>`, "item");
+  }
+
   function renderListItem(base, it, i, n, type) {
     return `
       <div class="list-row three">
@@ -370,6 +421,7 @@
     const items = s.items.map((it, j) => {
       const path = `${base}.items.${j}`;
       if (fam === "cards") return renderServiceItem(path, it, j, s.items.length);
+      if (fam === "cases") return renderCaseItem(path, it, j, s.items.length);
       if (fam === "timeline") return renderTimelineItem(path, it, j, s.items.length);
       return renderListItem(path, it, j, s.items.length, s.type);
     }).join("");
@@ -382,12 +434,13 @@
     return details(uid(s), summary, `
       <div class="row" style="align-items:end">
         <div class="field"><label>Section type</label><select data-path="${base}.type" data-rerender>${typeOptions}</select></div>
-        <label class="check"><input type="checkbox" data-path="${base}.visible" data-rerender ${s.visible !== false ? "checked" : ""}> Show on ${fam === "cards" ? "site (not in CV)" : "site and CV"}</label>
+        <label class="check"><input type="checkbox" data-path="${base}.visible" data-rerender ${s.visible !== false ? "checked" : ""}> Show on ${fam === "cards" || fam === "cases" ? "site (not in CV)" : "site and CV"}</label>
       </div>
+      ${fam === "cases" ? `<p class="hint">🔒 Only share photos with the patient's written consent. Avoid faces, names and anything that identifies the patient. Photos you delete here are removed from the website files when you click Save.</p>` : ""}
       ${biField("Section title", base + ".title")}
       <div class="field"><span class="field-label">Items</span>
         <div class="items">${items || `<p class="hint">No items yet.</p>`}</div>
-        <div><button class="btn btn-sm" type="button" data-act="add" data-path="${base}.items" data-tpl="${fam}">+ Add ${fam === "cards" ? "service" : fam === "timeline" ? "item" : "entry"}</button></div>
+        <div><button class="btn btn-sm" type="button" data-act="add" data-path="${base}.items" data-tpl="${fam}">+ Add ${{ cards: "service", cases: "case", timeline: "item" }[fam] || "entry"}</button></div>
       </div>`, "panel");
   }
 
@@ -407,11 +460,10 @@
   }
 
   // ---------- preview ----------
+  // Swap freshly uploaded images for their local copies until GitHub Pages serves them.
   function previewData() {
-    if (!pendingPhoto || state.profile.photo !== pendingPhoto.path) return state;
-    const copy = JSON.parse(JSON.stringify(state));
-    copy.profile.photo = pendingPhoto.dataUrl;
-    return copy;
+    if (!Object.keys(pendingImages).length) return state;
+    return JSON.parse(JSON.stringify(state), (k, v) => (typeof v === "string" && pendingImages[v]) || v);
   }
 
   function sendPreview() {
@@ -467,7 +519,7 @@
       s.items = s.items.map((it) => {
         const name = it.title || it.name || bi();
         const item = ITEM_FOR[to]();
-        if (to === "timeline") item.title = name; else item.name = name;
+        if (to === "timeline" || to === "cases") item.title = name; else item.name = name;
         if (it.description && to !== "list") item.description = it.description;
         return item;
       });
@@ -482,6 +534,7 @@
     timeline: timelineItem,
     list: listItem,
     cards: serviceItem,
+    cases: caseItem,
     stat: () => ({ value: "", label: bi() })
   };
 
@@ -497,7 +550,7 @@
       const item = TEMPLATES[btn.dataset.tpl]();
       arr.push(item);
       setAt(path, arr);
-      if (btn.dataset.tpl === "timeline" || btn.dataset.tpl === "cards") openKeys.add(uid(item));
+      if (["timeline", "cards", "cases"].includes(btn.dataset.tpl)) openKeys.add(uid(item));
     } else if (act === "remove") {
       if (!confirm("Delete this?")) return;
       const parts = path.split(".");
@@ -526,9 +579,13 @@
       if (!auth) return toast("Sign in with a GitHub token to upload a photo.", true);
       $("photoInput").click();
       return;
+    } else if (act === "case-photos") {
+      if (!auth) return toast("Sign in with a GitHub token to upload photos.", true);
+      casePhotoTarget = path;
+      $("casePhotoInput").click();
+      return;
     } else if (act === "photo-remove") {
       state.profile.photo = "";
-      pendingPhoto = null;
     } else {
       return;
     }
@@ -554,16 +611,22 @@
     });
   }
 
+  // Resize in the browser, then commit the JPEG to the repo. Returns its path.
+  async function uploadImage(file, path, maxSize, message) {
+    const dataUrl = await resizeImage(file, maxSize);
+    await putFile(path, dataUrl.split(",")[1], message);
+    pendingImages[path] = dataUrl;
+    uploadedPaths.add(path);
+    return path;
+  }
+
   $("photoInput").addEventListener("change", async (e) => {
     const file = e.target.files[0];
     e.target.value = "";
     if (!file) return;
     try {
       toast("Uploading photo…");
-      const dataUrl = await resizeImage(file, 600);
-      const path = "assets/img/profile-" + Date.now() + ".jpg";
-      await putFile(path, dataUrl.split(",")[1], "Upload profile photo");
-      pendingPhoto = { path, dataUrl };
+      const path = await uploadImage(file, IMG_DIR + "profile-" + Date.now() + ".jpg", 600, "Upload profile photo");
       state.profile.photo = path;
       setDirty(true);
       renderEditor();
@@ -572,6 +635,50 @@
       toast(friendlyError(err), true);
     }
   });
+
+  $("casePhotoInput").addEventListener("change", async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    const target = casePhotoTarget;
+    if (!files.length || !target) return;
+    let done = 0;
+    try {
+      for (const file of files) {
+        toast(`Uploading photo ${done + 1} of ${files.length}…`);
+        const path = await uploadImage(file, `${IMG_DIR}cases/case-${Date.now()}-${done}.jpg`, 1600, "Upload case photo");
+        const arr = getAt(target) || [];
+        arr.push({ src: path, caption: bi() });
+        setAt(target, arr);
+        done++;
+        setDirty(true);
+        renderEditor();
+      }
+      toast(`${done} photo${done === 1 ? "" : "s"} uploaded. Click Save to publish.`);
+    } catch (err) {
+      toast((done ? done + " uploaded, then: " : "") + friendlyError(err), true);
+    }
+  });
+
+  // After a save, delete uploaded images that nothing refers to any more,
+  // so removed patient photos don't stay in the public repository.
+  async function removeUnusedImages() {
+    const current = collectRefs(state);
+    const unused = [...new Set([...savedRefs, ...uploadedPaths])].filter((p) => !current.has(p) && p.startsWith(IMG_DIR));
+    let removed = 0;
+    for (const path of unused) {
+      try {
+        const file = await gh("GET", path);
+        await gh("DELETE", path, { message: "Remove unused image", sha: file.sha, branch: auth.branch });
+        removed++;
+      } catch (err) {
+        if (err.status !== 404) console.warn("Could not delete " + path, err);
+      }
+      delete pendingImages[path];
+    }
+    savedRefs = current;
+    uploadedPaths = new Set();
+    return removed;
+  }
 
   // ---------- save / export / import ----------
   function serialise() {
@@ -608,7 +715,8 @@
         sha = res.content.sha;
       }
       setDirty(false);
-      toast("Saved! The live site updates in about 1 minute.");
+      const removed = await removeUnusedImages();
+      toast("Saved! The live site updates in about 1 minute." + (removed ? ` Removed ${removed} unused photo${removed === 1 ? "" : "s"}.` : ""));
     } catch (err) {
       toast(friendlyError(err), true);
     } finally {

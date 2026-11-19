@@ -12,6 +12,7 @@
 
   let data = null;
   let lang = "en";
+  let cases = [];   // case items in render order, for the photo viewer
 
   const t = (v) => P.tr(v, lang);
   const ui = (k) => P.ui(k, lang);
@@ -126,6 +127,144 @@
       </article>`).join("")}</div>`;
   }
 
+  // ---------- clinical cases ----------
+  function renderCases(s) {
+    return `<div class="cases">${s.items.map((it) => {
+      const idx = cases.push(it) - 1;
+      const imgs = (it.images || []).filter((im) => im.src);
+      const cover = imgs[0]
+        ? `<img src="${esc(imgs[0].src)}" alt="${esc(t(imgs[0].caption) || t(it.title))}" loading="lazy">`
+        : `<div class="case-ph">${window.Icons.SERVICE.tooth}</div>`;
+      return `
+        <article class="case reveal" data-case="${idx}" tabindex="0" role="button" aria-label="${esc(ui("viewCase") + ": " + t(it.title))}">
+          <div class="case-media">
+            ${cover}
+            ${imgs.length > 1 ? `<span class="case-count">${I.camera}${imgs.length}</span>` : ""}
+          </div>
+          <div class="case-body">
+            <div class="case-meta">
+              ${t(it.category) ? `<span class="case-tag">${esc(t(it.category))}</span>` : ""}
+              ${it.date ? `<span class="case-date">${esc(it.date)}</span>` : ""}
+            </div>
+            <h3>${esc(t(it.title))}</h3>
+            ${t(it.description) ? `<p>${esc(t(it.description))}</p>` : ""}
+            <span class="case-more">${ui("viewCase")}${I.arrow}</span>
+          </div>
+        </article>`;
+    }).join("")}</div>`;
+  }
+
+  // Full-screen viewer for a case's photos.
+  const lb = { el: null, item: null, i: 0 };
+
+  function lightboxEl() {
+    if (lb.el) return lb.el;
+    const el = document.createElement("div");
+    el.className = "lb";
+    el.hidden = true;
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-modal", "true");
+    el.innerHTML = `
+      <div class="lb-backdrop" data-lb="close"></div>
+      <div class="lb-panel">
+        <button class="lb-close" type="button" data-lb="close">${I.close}</button>
+        <div class="lb-stage">
+          <img class="lb-img" alt="">
+          <button class="lb-nav lb-prev" type="button" data-lb="prev">${I.chevLeft}</button>
+          <button class="lb-nav lb-next" type="button" data-lb="next">${I.chevRight}</button>
+          <span class="lb-counter"></span>
+        </div>
+        <div class="lb-thumbs"></div>
+        <div class="lb-info">
+          <div class="lb-caption"></div>
+          <div class="case-meta"></div>
+          <h3 class="lb-title"></h3>
+          <p class="lb-desc"></p>
+        </div>
+      </div>`;
+    el.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-lb]");
+      if (!b) return;
+      const a = b.dataset.lb;
+      if (a === "close") closeCase();
+      else if (a === "prev") showPhoto(lb.i - 1);
+      else if (a === "next") showPhoto(lb.i + 1);
+      else if (a === "go") showPhoto(+b.dataset.i);
+    });
+    document.body.appendChild(el);
+    lb.el = el;
+    return el;
+  }
+
+  function openCase(idx) {
+    const it = cases[idx];
+    if (!it) return;
+    const el = lightboxEl();
+    lb.item = it;
+    lb.last = document.activeElement;
+    const imgs = (it.images || []).filter((im) => im.src);
+    el.querySelector(".lb-title").textContent = t(it.title);
+    el.querySelector(".lb-desc").textContent = t(it.description);
+    el.querySelector(".case-meta").innerHTML =
+      (t(it.category) ? `<span class="case-tag">${esc(t(it.category))}</span>` : "") +
+      (it.date ? `<span class="case-date">${esc(it.date)}</span>` : "");
+    el.querySelector(".lb-thumbs").innerHTML = imgs.length > 1
+      ? imgs.map((im, k) => `<button type="button" data-lb="go" data-i="${k}"><img src="${esc(im.src)}" alt=""></button>`).join("")
+      : "";
+    el.querySelector(".lb-close").setAttribute("aria-label", ui("close"));
+    el.querySelector(".lb-prev").setAttribute("aria-label", ui("prev"));
+    el.querySelector(".lb-next").setAttribute("aria-label", ui("next"));
+    el.classList.toggle("single", imgs.length < 2);
+    el.classList.toggle("no-photo", !imgs.length);
+    el.hidden = false;
+    document.body.style.overflow = "hidden";
+    showPhoto(0);
+    el.querySelector(".lb-close").focus();
+  }
+
+  function showPhoto(i) {
+    const imgs = ((lb.item && lb.item.images) || []).filter((im) => im.src);
+    if (!imgs.length) return;
+    lb.i = (i + imgs.length) % imgs.length;
+    const im = imgs[lb.i];
+    const el = lb.el;
+    const img = el.querySelector(".lb-img");
+    img.src = im.src;
+    img.alt = t(im.caption) || t(lb.item.title);
+    el.querySelector(".lb-caption").textContent = t(im.caption);
+    el.querySelector(".lb-counter").textContent = imgs.length > 1 ? `${lb.i + 1} / ${imgs.length}` : "";
+    el.querySelectorAll(".lb-thumbs button").forEach((b, k) => b.classList.toggle("active", k === lb.i));
+  }
+
+  function closeCase() {
+    if (!lb.el || lb.el.hidden) return;
+    lb.el.hidden = true;
+    document.body.style.overflow = "";
+    if (lb.last && lb.last.focus) lb.last.focus();
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (lb.el && !lb.el.hidden) {
+      const rtl = lang === "ar";
+      if (e.key === "Escape") closeCase();
+      else if (e.key === "ArrowRight") showPhoto(lb.i + (rtl ? -1 : 1));
+      else if (e.key === "ArrowLeft") showPhoto(lb.i + (rtl ? 1 : -1));
+      return;
+    }
+    const card = e.target.closest && e.target.closest(".case[data-case]");
+    if (card && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openCase(+card.dataset.case); }
+  });
+
+  // Swipe between photos on phones.
+  let touchX = null;
+  document.addEventListener("touchstart", (e) => { if (e.target.closest(".lb-stage")) touchX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", (e) => {
+    if (touchX == null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+    if (Math.abs(dx) > 40) showPhoto(lb.i + ((dx < 0) !== (lang === "ar") ? 1 : -1));
+  });
+
   function renderSkills(s) {
     return `<ul class="skills">${s.items.filter((it) => t(it.name)).map((it) => `
       <li class="skill reveal"><span class="ic">${I.check}</span><span>${esc(t(it.name))}</span>${t(it.level) ? `<small>${esc(t(it.level))}</small>` : ""}</li>`).join("")}</ul>`;
@@ -138,7 +277,8 @@
 
   function renderSection(s, alt) {
     let body;
-    if (P.isCards(s.type)) body = renderServices(s);
+    if (s.type === "cases") body = renderCases(s);
+    else if (P.isCards(s.type)) body = renderServices(s);
     else if (P.isTimeline(s.type)) body = renderTimeline(s);
     else if (s.type === "languages") body = renderLanguages(s);
     else body = renderSkills(s);
@@ -191,6 +331,8 @@
     document.title = name + (t(p.title) ? " | " + t(p.title) : "");
 
     const sections = (data.sections || []).filter(hasItems);
+    cases = [];
+    closeCase();
 
     // Navigation: About, the first few sections, Contact.
     document.getElementById("brandMark").innerHTML = window.Icons.SERVICE.tooth;
@@ -242,6 +384,8 @@
   // ---------- events ----------
   document.addEventListener("click", (e) => {
     if (e.target.closest("[data-action='cv']")) window.CV.download(data, lang);
+    const card = e.target.closest(".case[data-case]");
+    if (card) openCase(+card.dataset.case);
     if (e.target.closest(".nav-links a")) closeMenu();
   });
 

@@ -35,7 +35,13 @@
       eyebrow_skills: "Expertise",
       eyebrow_languages: "Communication",
       eyebrow_services: "What I offer",
-      eyebrow_custom: "More about me"
+      eyebrow_custom: "More about me",
+      eyebrow_cases: "Clinical work",
+      photos: "photos",
+      viewCase: "View case",
+      close: "Close",
+      prev: "Previous photo",
+      next: "Next photo"
     },
     ar: {
       downloadCv: "تحميل السيرة الذاتية",
@@ -71,7 +77,13 @@
       eyebrow_skills: "المهارات",
       eyebrow_languages: "التواصل",
       eyebrow_services: "ما أقدمه",
-      eyebrow_custom: "المزيد عني"
+      eyebrow_custom: "المزيد عني",
+      eyebrow_cases: "من أعمالي",
+      photos: "صور",
+      viewCase: "عرض الحالة",
+      close: "إغلاق",
+      prev: "الصورة السابقة",
+      next: "الصورة التالية"
     }
   };
 
@@ -132,6 +144,8 @@
   const isTimeline = (type) => TIMELINE_TYPES.includes(type);
   // "services" sections are cards on the site and are left out of the CV.
   const isCards = (type) => type === "services";
+  // Sections shown on the website only, never in the CV.
+  const isPortfolioOnly = (type) => type === "services" || type === "cases";
 
-  window.Portfolio = { getLang, setLang, applyDir, tr, ui, loadData, esc, dateRange, isTimeline, isCards };
+  window.Portfolio = { getLang, setLang, applyDir, tr, ui, loadData, esc, dateRange, isTimeline, isCards, isPortfolioOnly };
 })();

@@ -133,3 +133,13 @@ input[type="color"] { width: 48px; height: 36px; padding: 2px; border: 1px solid
 .svc-ic svg { width: 18px; height: 18px; }
 .icon-pick { display: flex; gap: 10px; align-items: center; }
 .icon-pick select { max-width: 220px; }
+
+/* Clinical case photos */
+.img-row { display: grid; grid-template-columns: 72px 1fr 1fr auto; gap: 8px; align-items: center; }
+.img-row img { width: 72px; height: 54px; object-fit: cover; border-radius: 8px; background: var(--chip); }
+.case-thumb { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--chip); display: inline-grid; place-items: center; font-size: 15px; }
+@media (max-width: 600px) {
+  .img-row { grid-template-columns: 72px 1fr auto; }
+  .img-row > :nth-child(3) { grid-column: 2; }
+  .img-row > :last-child { grid-column: 3; grid-row: 1; }
+}

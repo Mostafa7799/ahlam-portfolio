@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/cv.css?v=4">
+  <link rel="stylesheet" href="assets/css/cv.css?v=5">
 </head>
 <body>
   <div class="toolbar">
@@ -17,7 +17,7 @@
   </div>
   <article class="page" id="cv"></article>
 
-  <script src="assets/js/i18n.js?v=4"></script>
+  <script src="assets/js/i18n.js?v=5"></script>
   <script>
     (function () {
       const P = window.Portfolio;
@@ -47,7 +47,7 @@
         html += `<p class="cv-contact">${contact}</p>`;
         if (t(p.summary)) html += `<h2>${P.ui("summary", lang)}</h2><p>${P.esc(t(p.summary))}</p>`;
 
-        (data.sections || []).filter((s) => s.visible !== false && !P.isCards(s.type) && (s.items || []).length).forEach((s) => {
+        (data.sections || []).filter((s) => s.visible !== false && !P.isPortfolioOnly(s.type) && (s.items || []).length).forEach((s) => {
           html += `<h2>${P.esc(t(s.title))}</h2>`;
           if (P.isTimeline(s.type)) {
             s.items.forEach((it) => {
