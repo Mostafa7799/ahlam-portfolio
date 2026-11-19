@@ -104,15 +104,27 @@
   async function gh(method, path, body) {
     const url = `https://api.github.com/repos/${auth.owner}/${auth.repo}/contents/${path}` +
       (method === "GET" ? `?ref=${encodeURIComponent(auth.branch)}&t=${Date.now()}` : "");
-    const res = await fetch(url, {
-      method,
-      cache: "no-store",
-      headers: {
-        Authorization: "Bearer " + auth.token,
-        Accept: "application/vnd.github+json"
-      },
-      body: body ? JSON.stringify(body) : undefined
-    });
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25000);
+    let res;
+    try {
+      res = await fetch(url, {
+        method,
+        cache: "no-store",
+        signal: ctrl.signal,
+        headers: {
+          Authorization: "Bearer " + auth.token,
+          Accept: "application/vnd.github+json"
+        },
+        body: body ? JSON.stringify(body) : undefined
+      });
+    } catch (e) {
+      throw new Error(e.name === "AbortError"
+        ? "GitHub didn't respond. Check your internet connection and try again."
+        : "Couldn't reach GitHub (" + e.message + "). Check your connection, or turn off ad-blockers for this page.");
+    } finally {
+      clearTimeout(timer);
+    }
     const json = await res.json().catch(() => ({}));
     if (!res.ok) {
       const err = new Error(json.message || "GitHub error " + res.status);
@@ -158,8 +170,11 @@
   }
 
   async function signIn(a) {
+    if (!a.token) { $("loginError").textContent = "Paste your GitHub token first."; return; }
     auth = a;
-    $("loginBtn").disabled = true;
+    const btn = $("loginBtn");
+    btn.disabled = true;
+    btn.textContent = "Signing in…";
     $("loginError").textContent = "";
     try {
       const remote = await fetchRemote();
@@ -170,8 +185,10 @@
       auth = null;
       $("loginError").textContent = friendlyError(err);
       if (err.status === 401) writeAuth(null);
+      showLogin();
     } finally {
-      $("loginBtn").disabled = false;
+      btn.disabled = false;
+      btn.textContent = "Sign in";
     }
   }
 
@@ -181,6 +198,7 @@
       startEditor(await P.loadData());
       toast("Offline mode: use Export to download data.json.");
     } catch (e) {
+      showLogin();
       $("loginError").textContent = "Could not load data/data.json.";
     }
   }
@@ -188,14 +206,19 @@
   function startEditor(data) {
     state = normalise(data);
     previewLang = state.settings.defaultLanguage === "ar" ? "ar" : "en";
-    $("loginView").hidden = true;
-    $("editorView").hidden = false;
     $("saveBtn").textContent = auth ? "Save" : "Download data.json";
     $("logoutBtn").textContent = auth ? "Log out" : "Exit";
     $("previewLangBtn").textContent = previewLang === "ar" ? "English" : "عربي";
     setDirty(false);
     renderEditor();
+    $("loginView").hidden = true;
+    $("editorView").hidden = false;
     $("preview").src = "index.html?preview=1";
+  }
+
+  function showLogin() {
+    $("loginView").hidden = false;
+    $("editorView").hidden = true;
   }
 
   // ---------- rendering ----------
@@ -392,7 +415,10 @@
 
   function sendPreview() {
     const frame = $("preview");
-    if (frame.contentWindow) frame.contentWindow.postMessage({ type: "preview", data: previewData(), lang: previewLang }, location.origin);
+    if (!frame.contentWindow) return;
+    try {
+      frame.contentWindow.postMessage({ type: "preview", data: previewData(), lang: previewLang }, location.origin === "null" ? "*" : location.origin);
+    } catch (e) { /* preview is optional */ }
   }
   let previewTimer = null;
   const schedulePreview = () => { clearTimeout(previewTimer); previewTimer = setTimeout(sendPreview, 250); };
@@ -641,10 +667,22 @@
       owner: $("ownerInput").value.trim(),
       repo: $("repoInput").value.trim(),
       branch: $("branchInput").value.trim() || "main",
-      token: $("tokenInput").value.trim()
+      token: $("tokenInput").value.replace(/[^A-Za-z0-9_]/g, "")
     });
   });
   $("offlineBtn").addEventListener("click", startOffline);
+
+  // Show unexpected errors instead of failing silently.
+  function reportError(msg) {
+    if (!$("loginView").hidden) $("loginError").textContent = "Error: " + msg;
+    else toast("Error: " + msg, true);
+  }
+  window.addEventListener("error", (e) => reportError(e.message));
+  window.addEventListener("unhandledrejection", (e) => reportError((e.reason && e.reason.message) || String(e.reason)));
+
+  if (location.protocol === "file:") {
+    $("loginError").textContent = "This page was opened as a local file. Open it from the website instead: https://mostafa7799.github.io/dr-ahlam/admin.html";
+  }
 
   // Start: prefill the repo fields, and sign in automatically if a token is saved.
   const saved = readAuth();
