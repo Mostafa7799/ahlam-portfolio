@@ -44,8 +44,8 @@
       {
         "value": "BDS",
         "label": {
-          "en": "Bachelor of Dental Surgery",
-          "ar": "بكالوريوس طب وجراحة الفم والأسنان"
+          "en": "Bachelor of Dentistry",
+          "ar": "بكالوريوس طب الأسنان"
         }
       },
       {
@@ -197,22 +197,22 @@
       "items": [
         {
           "title": {
-            "en": "Bachelor of Dental Surgery (BDS)",
-            "ar": "بكالوريوس طب وجراحة الفم والأسنان"
+            "en": "Bachelor of Dentistry",
+            "ar": "بكالوريوس طب الأسنان"
           },
           "org": {
-            "en": "Faculty of Dentistry, (University name)",
-            "ar": "كلية طب الأسنان، (اسم الجامعة)"
+            "en": "Sinai University – Kantara Branch",
+            "ar": "جامعة سيناء – فرع القنطرة"
           },
           "location": {
             "en": "Egypt",
             "ar": "مصر"
           },
-          "start": "09/2019",
-          "end": "06/2024",
+          "start": "2024",
+          "end": "2025",
           "description": {
-            "en": "Grade: (Your grade)",
-            "ar": "التقدير: (التقدير)"
+            "en": "",
+            "ar": ""
           },
           "bullets": []
         }
@@ -229,8 +229,38 @@
       "items": [
         {
           "name": {
-            "en": "Diagnosis & Treatment Planning",
-            "ar": "التشخيص ووضع خطة العلاج"
+            "en": "Patient communication and chairside management",
+            "ar": "التواصل مع المرضى وإدارة الجلسة العلاجية"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Simple case planning and treatment sequencing",
+            "ar": "تخطيط الحالات البسيطة وترتيب مراحل العلاج"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Rubber dam isolation techniques",
+            "ar": "تقنيات العزل بالحاجز المطاطي (الرابر دام)"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Professional dental photography for clinical records",
+            "ar": "التصوير الاحترافي للأسنان للسجلات السريرية"
           },
           "level": {
             "en": "",
@@ -271,16 +301,6 @@
           "name": {
             "en": "Simple Extractions",
             "ar": "الخلع البسيط"
-          },
-          "level": {
-            "en": "",
-            "ar": ""
-          }
-        },
-        {
-          "name": {
-            "en": "Patient Communication",
-            "ar": "التواصل مع المرضى"
           },
           "level": {
             "en": "",
