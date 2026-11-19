@@ -1,4 +1,6 @@
 /* Admin editor (loaded after style.css, reuses its tokens). */
+/* The login and editor are separate screens: make sure [hidden] always wins over display rules. */
+[hidden] { display: none !important; }
 body.admin { background: var(--bg); }
 .admin-bar {
   position: sticky; top: 0; z-index: 20; background: var(--surface);

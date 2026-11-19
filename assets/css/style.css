@@ -187,7 +187,7 @@ html[dir="rtl"] .hero-visual::before { inset: -18px auto auto -18px; }
   .hero-visual { order: -1; width: min(62%, 270px); }
   .photo-frame { border-width: 6px; }
   .fc-1 { inset-inline-start: -22px; bottom: 20px; }
-  .fc-2 { inset-inline-end: -18px; top: 24px; }
+  .fc-2 { display: none; }
   .hero-text { text-align: center; }
   .lead { margin-inline: auto; }
   .hero-actions, .stats { justify-content: center; }

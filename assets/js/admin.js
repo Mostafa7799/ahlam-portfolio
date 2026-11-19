@@ -213,6 +213,7 @@
     renderEditor();
     $("loginView").hidden = true;
     $("editorView").hidden = false;
+    window.scrollTo(0, 0);
     $("preview").src = "index.html?preview=1";
   }
 
