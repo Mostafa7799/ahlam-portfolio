@@ -10,8 +10,8 @@
       "ar": "أحلام علي أحمد عبد الودود محمد"
     },
     "shortName": {
-      "en": "Dr. Ahlam Abdelwadod",
-      "ar": "د. أحلام عبد الودود"
+      "en": "Dr. Ahlam Ali",
+      "ar": "د. أحلام علي"
     },
     "title": {
       "en": "Dentist",
@@ -322,7 +322,8 @@
             "en": "",
             "ar": ""
           },
-          "bullets": []
+          "bullets": [],
+          "images": []
         }
       ]
     },
@@ -465,7 +466,8 @@
             "en": "Short description of the research topic and your role.",
             "ar": "وصف مختصر لموضوع البحث ودورك فيه."
           },
-          "bullets": []
+          "bullets": [],
+          "images": []
         }
       ]
     },
