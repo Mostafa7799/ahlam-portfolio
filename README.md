@@ -2,8 +2,8 @@
 
 A simple bilingual (English / العربية) portfolio, hosted for free on GitHub Pages.
 
-- **Site:** https://mostafa7799.github.io/ahlam-portfolio/
-- **Admin:** https://mostafa7799.github.io/ahlam-portfolio/admin.html
+- **Site:** https://mostafa7799.github.io/dr-ahlam/
+- **Admin:** https://mostafa7799.github.io/dr-ahlam/admin.html
 
 All content lives in one file, [`data/data.json`](data/data.json). The site, the CV and the admin page all use it.
 
@@ -21,7 +21,7 @@ All content lives in one file, [`data/data.json`](data/data.json). The site, the
 ### Creating the admin token (one time)
 
 1. On GitHub go to **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
-2. **Repository access:** *Only select repositories* → `ahlam-portfolio`.
+2. **Repository access:** *Only select repositories* → `dr-ahlam`.
 3. **Permissions → Repository permissions → Contents:** *Read and write*.
 4. Generate, copy the token and paste it into the admin page.
 

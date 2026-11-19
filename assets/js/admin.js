@@ -140,7 +140,7 @@
       const repo = location.pathname.split("/").filter(Boolean)[0];
       return { owner, repo: repo && !repo.endsWith(".html") ? repo : owner + ".github.io", branch: "main" };
     }
-    return { owner: "Mostafa7799", repo: "ahlam-portfolio", branch: "main" };
+    return { owner: "Mostafa7799", repo: "dr-ahlam", branch: "main" };
   }
 
   function readAuth() {
