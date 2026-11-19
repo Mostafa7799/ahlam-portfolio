@@ -38,7 +38,7 @@
 
   // ---------- helpers ----------
   const bi = () => ({ en: "", ar: "" });
-  const timelineItem = () => ({ title: bi(), org: bi(), location: bi(), start: "", end: "", description: bi(), bullets: [] });
+  const timelineItem = () => ({ title: bi(), org: bi(), location: bi(), start: "", end: "", description: bi(), bullets: [], images: [] });
   const listItem = () => ({ name: bi(), level: bi() });
   const serviceItem = () => ({ icon: "tooth", name: bi(), description: bi() });
   const caseItem = () => ({ title: bi(), category: bi(), date: "", description: bi(), images: [] });
@@ -91,7 +91,7 @@
     d.sections = (d.sections || []).map((s) => {
       s.title = typeof s.title === "string" ? { en: s.title, ar: "" } : Object.assign(bi(), s.title);
       s.items = (s.items || []).map((it) => Object.assign(ITEM_FOR[family(s.type)](), it));
-      if (s.type === "cases") {
+      if (s.type === "cases" || P.isTimeline(s.type)) {
         s.items.forEach((it) => {
           it.images = (it.images || []).map((im) => ({ src: im.src || "", caption: Object.assign(bi(), im.caption) }));
         });
@@ -360,7 +360,8 @@
       <div class="field"><span class="field-label">Bullet points</span>
         <div class="items">${bullets}</div>
         <div><button class="btn btn-sm" type="button" data-act="add" data-path="${base}.bullets" data-tpl="bullet">+ Add bullet</button></div>
-      </div>`, "item");
+      </div>
+      ${imagesField(base, it.images || [], "Images (e.g. certificate scan) – website only, not in the CV")}`, "item");
   }
 
   function renderServiceItem(base, it, i, n) {
@@ -375,8 +376,8 @@
       ${biField("Short description", base + ".description", { multiline: true })}`, "item");
   }
 
-  function renderCaseItem(base, it, i, n) {
-    const imgs = it.images || [];
+  // Photo list with captions, shared by cases and timeline items (e.g. certificate scans).
+  function imagesField(base, imgs, label) {
     const rows = imgs.map((im, k) => `
       <div class="img-row">
         <img src="${esc(imgSrc(im.src))}" alt="" loading="lazy">
@@ -384,6 +385,16 @@
         <input type="text" dir="rtl" data-path="${base}.images.${k}.caption.ar" value="${esc(im.caption.ar)}" placeholder="الوصف (مثال: قبل)">
         <span style="display:flex;gap:4px">${controls(base + ".images." + k, k, imgs.length)}</span>
       </div>`).join("");
+    return `
+      <div class="field"><span class="field-label">${esc(label)}</span>
+        <div class="items">${rows || `<p class="hint">No photos yet.</p>`}</div>
+        <div><button class="btn btn-sm" type="button" data-act="case-photos" data-path="${base}.images">+ Add photos</button></div>
+        ${auth ? "" : `<p class="hint">Photo upload needs a GitHub token.</p>`}
+      </div>`;
+  }
+
+  function renderCaseItem(base, it, i, n) {
+    const imgs = it.images || [];
     const cover = imgs[0] ? `<img class="case-thumb" src="${esc(imgSrc(imgs[0].src))}" alt="">` : `<span class="case-thumb ph">📷</span>`;
     const summary = `${cover}<span class="grow">${esc(P.tr(it.title, "en") || "New case")}</span>
       <span class="hidden-tag">${imgs.length} photo${imgs.length === 1 ? "" : "s"}</span>${controls(base, i, n)}`;
@@ -397,11 +408,7 @@
         ${textField("Date (optional)", base + ".date", "text", "03/2025")}
       </div>
       ${biField("Description (what was done, materials, result)", base + ".description", { multiline: true })}
-      <div class="field"><span class="field-label">Photos (the first photo is the cover)</span>
-        <div class="items">${rows || `<p class="hint">No photos yet.</p>`}</div>
-        <div><button class="btn btn-sm" type="button" data-act="case-photos" data-path="${base}.images">+ Add photos</button></div>
-        ${auth ? "" : `<p class="hint">Photo upload needs a GitHub token.</p>`}
-      </div>`, "item");
+      ${imagesField(base, imgs, "Photos (the first photo is the cover)")}`, "item");
   }
 
   function renderListItem(base, it, i, n, type) {

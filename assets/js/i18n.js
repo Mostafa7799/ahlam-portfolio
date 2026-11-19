@@ -41,7 +41,9 @@
       viewCase: "View case",
       close: "Close",
       prev: "Previous photo",
-      next: "Next photo"
+      next: "Next photo",
+      viewCertificate: "View certificate",
+      viewImages: "View images"
     },
     ar: {
       downloadCv: "تحميل السيرة الذاتية",
@@ -83,7 +85,9 @@
       viewCase: "عرض الحالة",
       close: "إغلاق",
       prev: "الصورة السابقة",
-      next: "الصورة التالية"
+      next: "الصورة التالية",
+      viewCertificate: "عرض الشهادة",
+      viewImages: "عرض الصور"
     }
   };
 

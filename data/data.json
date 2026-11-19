@@ -166,33 +166,131 @@
             "ar": "طبيبة امتياز"
           },
           "org": {
-            "en": "(Hospital / Clinic name)",
-            "ar": "(اسم المستشفى / العيادة)"
+            "en": "Sinai University",
+            "ar": "جامعة سيناء"
           },
           "location": {
             "en": "Egypt",
             "ar": "مصر"
           },
-          "start": "03/2025",
-          "end": "Present",
+          "start": "",
+          "end": "",
           "description": {
+            "en": "Rotating clinical internship across the faculty's dental clinics, examining and treating patients under supervision.",
+            "ar": "تدريب امتياز دوّار في العيادات السريرية بكلية طب الأسنان، مع فحص وعلاج المرضى تحت الإشراف."
+          },
+          "bullets": [],
+          "images": []
+        },
+        {
+          "title": {
+            "en": "Internship Rotation – Pediatric Dentistry & Dental Emergency",
+            "ar": "تدريب امتياز – طب أسنان الأطفال وطوارئ الأسنان"
+          },
+          "org": {
+            "en": "Cairo University",
+            "ar": "جامعة القاهرة"
+          },
+          "location": {
+            "en": "Cairo, Egypt",
+            "ar": "القاهرة، مصر"
+          },
+          "start": "",
+          "end": "",
+          "description": {
+            "en": "Clinical rotation in the pediatric dentistry and dental emergency departments.",
+            "ar": "تدريب سريري في قسمي طب أسنان الأطفال وطوارئ الأسنان."
+          },
+          "bullets": [],
+          "images": []
+        },
+        {
+          "title": {
+            "en": "Dental Intern",
+            "ar": "طبيبة امتياز"
+          },
+          "org": {
+            "en": "Faqous General Hospital",
+            "ar": "مستشفى فاقوس العام"
+          },
+          "location": {
+            "en": "Sharqia, Egypt",
+            "ar": "الشرقية، مصر"
+          },
+          "start": "",
+          "end": "",
+          "description": {
+            "en": "Hospital-based internship in the dental department, examining and treating outpatients under supervision.",
+            "ar": "تدريب امتياز بقسم الأسنان بالمستشفى، مع فحص وعلاج مرضى العيادات الخارجية تحت الإشراف."
+          },
+          "bullets": [],
+          "images": []
+        },
+        {
+          "title": {
+            "en": "Second Operator (Chairside Assistant)",
+            "ar": "مساعدة طبيب أسنان (المشغّل الثاني)"
+          },
+          "org": {
+            "en": "Diamond Dental Center",
+            "ar": "مركز دايموند لطب الأسنان"
+          },
+          "location": {
             "en": "",
             "ar": ""
           },
-          "bullets": [
-            {
-              "en": "Examined, diagnosed and treated patients under supervision across restorative, endodontic, periodontal and oral surgery clinics.",
-              "ar": "فحص وتشخيص وعلاج المرضى تحت الإشراف في عيادات العلاج التحفظي والعصب واللثة وجراحة الفم."
-            },
-            {
-              "en": "Followed strict infection-control and sterilisation protocols.",
-              "ar": "الالتزام الصارم ببروتوكولات مكافحة العدوى والتعقيم."
-            },
-            {
-              "en": "Explained treatment plans clearly to patients and their families.",
-              "ar": "شرح خطط العلاج بوضوح للمرضى وذويهم."
-            }
-          ]
+          "start": "",
+          "end": "",
+          "description": {
+            "en": "Assisted the treating dentist chairside in four-handed dentistry: instrument preparation, isolation and infection control.",
+            "ar": "مساعدة الطبيب المعالج بجانب الكرسي بأسلوب العمل بأربع أيدٍ: تجهيز الأدوات، والعزل، ومكافحة العدوى."
+          },
+          "bullets": [],
+          "images": []
+        },
+        {
+          "title": {
+            "en": "Clinical Trainee",
+            "ar": "متدربة سريرية"
+          },
+          "org": {
+            "en": "Dr. Mariam El-Hosary Dental Clinic",
+            "ar": "عيادة د. مريم الحصري لطب الأسنان"
+          },
+          "location": {
+            "en": "",
+            "ar": ""
+          },
+          "start": "",
+          "end": "",
+          "description": {
+            "en": "Hands-on clinical training in a private dental practice.",
+            "ar": "تدريب سريري عملي في عيادة أسنان خاصة."
+          },
+          "bullets": [],
+          "images": []
+        },
+        {
+          "title": {
+            "en": "Clinical Trainee",
+            "ar": "متدربة سريرية"
+          },
+          "org": {
+            "en": "Dr. Said Shosho Dental Clinic",
+            "ar": "عيادة د. سعيد شوشو لطب الأسنان"
+          },
+          "location": {
+            "en": "",
+            "ar": ""
+          },
+          "start": "",
+          "end": "",
+          "description": {
+            "en": "Hands-on clinical training in a private dental practice.",
+            "ar": "تدريب سريري عملي في عيادة أسنان خاصة."
+          },
+          "bullets": [],
+          "images": []
         }
       ]
     },
@@ -382,24 +480,93 @@
       "items": [
         {
           "title": {
-            "en": "Certificate / Course name",
-            "ar": "اسم الشهادة / الدورة"
+            "en": "IDEX Egypt 2026 – 12th International Dental Expo & Congress",
+            "ar": "معرض ومؤتمر IDEX مصر الدولي لطب الأسنان 2026 – النسخة الثانية عشرة"
           },
           "org": {
-            "en": "Issuer",
-            "ar": "الجهة المانحة"
+            "en": "Certificate of Participation",
+            "ar": "شهادة مشاركة"
           },
           "location": {
-            "en": "",
-            "ar": ""
+            "en": "InterContinental CityStars, Cairo, Egypt",
+            "ar": "فندق إنتركونتيننتال سيتي ستارز، القاهرة، مصر"
           },
           "start": "",
-          "end": "2024",
+          "end": "01/2026",
           "description": {
-            "en": "",
-            "ar": ""
+            "en": "29–31 January 2026 · 20 credit points · 18 CPD hours approved by the Royal College of Surgeons of Edinburgh (RCSEd).",
+            "ar": "29–31 يناير 2026 · 20 نقطة اعتماد · 18 ساعة تطوير مهني مستمر معتمدة من الكلية الملكية للجراحين بإدنبرة (RCSEd)."
           },
-          "bullets": []
+          "bullets": [],
+          "images": [
+            {
+              "src": "assets/img/certificates/idex-egypt-2026.jpg",
+              "caption": {
+                "en": "Certificate of Participation – IDEX Egypt 2026",
+                "ar": "شهادة مشاركة – IDEX مصر 2026"
+              }
+            }
+          ]
+        },
+        {
+          "title": {
+            "en": "Egyptian Dental Day 2025",
+            "ar": "اليوم المصري لطب الأسنان 2025"
+          },
+          "org": {
+            "en": "Certificate of Attendance · EADS",
+            "ar": "شهادة حضور · EADS"
+          },
+          "location": {
+            "en": "Cairo University, Egypt",
+            "ar": "جامعة القاهرة، مصر"
+          },
+          "start": "",
+          "end": "05/2025",
+          "description": {
+            "en": "Held on 2 May 2025 · 12 accredited credit hours.",
+            "ar": "أُقيم في 2 مايو 2025 · 12 ساعة معتمدة."
+          },
+          "bullets": [],
+          "images": [
+            {
+              "src": "assets/img/certificates/egyptian-dental-day-2025.jpg",
+              "caption": {
+                "en": "Certificate of Attendance – Egyptian Dental Day 2025",
+                "ar": "شهادة حضور – اليوم المصري لطب الأسنان 2025"
+              }
+            }
+          ]
+        },
+        {
+          "title": {
+            "en": "International Dental Congress 2024 (IDC 24)",
+            "ar": "المؤتمر الدولي لطب الأسنان 2024 (IDC 24)"
+          },
+          "org": {
+            "en": "Certificate of Attendance · EADS",
+            "ar": "شهادة حضور · EADS"
+          },
+          "location": {
+            "en": "The Military and Armament House, Cairo, Egypt",
+            "ar": "القاهرة، مصر"
+          },
+          "start": "",
+          "end": "11/2024",
+          "description": {
+            "en": "Attended the full scientific program (28–29 November 2024) · 18 accredited hours · ADA CERP recognized.",
+            "ar": "حضور البرنامج العلمي كاملًا (28–29 نوفمبر 2024) · 18 ساعة معتمدة · معترف به من ADA CERP."
+          },
+          "bullets": [],
+          "images": [
+            {
+              "src": "assets/img/certificates/international-dental-congress-2024.jpg",
+              "caption": {
+                "en": "Certificate of Attendance – IDC 2024",
+                "ar": "شهادة حضور – IDC 2024"
+              }
+            }
+          ]
         }
       ]
     },

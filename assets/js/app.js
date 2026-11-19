@@ -105,14 +105,22 @@
       const org = [t(it.title) ? t(it.org) : "", t(it.location)].filter(Boolean).join(" · ");
       const date = P.dateRange(it, lang);
       const bullets = (it.bullets || []).map(t).filter(Boolean);
+      const imgs = (it.images || []).filter((im) => im.src);
+      const media = imgs.length ? `
+            <button class="tl-media" type="button" data-case="${cases.push(it) - 1}">
+              <img src="${esc(imgs[0].src)}" alt="${esc(title)}" loading="lazy">
+              <span>${I.camera}${ui(s.type === "certificates" ? "viewCertificate" : "viewImages")}</span>
+            </button>` : "";
       return `
         <li class="tl reveal">
           <span class="tl-dot">${TYPE_ICON[s.type] || I.check}</span>
-          <div class="tl-card">
+          <div class="tl-card${imgs.length ? " has-media" : ""}">${media}
+            <div class="tl-content">
             <div class="tl-top"><h3>${esc(title)}</h3>${date ? `<span class="tl-date">${I.calendar}${esc(date)}</span>` : ""}</div>
             ${org ? `<p class="tl-org">${esc(org)}</p>` : ""}
             ${t(it.description) ? `<p class="tl-desc">${esc(t(it.description))}</p>` : ""}
             ${bullets.length ? `<ul class="tl-bullets">${bullets.map((b) => `<li>${I.check}<span>${esc(b)}</span></li>`).join("")}</ul>` : ""}
+            </div>
           </div>
         </li>`;
     }).join("")}</ol>`;
@@ -205,9 +213,11 @@
     const imgs = (it.images || []).filter((im) => im.src);
     el.querySelector(".lb-title").textContent = t(it.title);
     el.querySelector(".lb-desc").textContent = t(it.description);
+    const tag = t(it.category) || t(it.org);
+    const date = it.date || P.dateRange(it, lang);
     el.querySelector(".case-meta").innerHTML =
-      (t(it.category) ? `<span class="case-tag">${esc(t(it.category))}</span>` : "") +
-      (it.date ? `<span class="case-date">${esc(it.date)}</span>` : "");
+      (tag ? `<span class="case-tag">${esc(tag)}</span>` : "") +
+      (date ? `<span class="case-date">${esc(date)}</span>` : "");
     el.querySelector(".lb-thumbs").innerHTML = imgs.length > 1
       ? imgs.map((im, k) => `<button type="button" data-lb="go" data-i="${k}"><img src="${esc(im.src)}" alt=""></button>`).join("")
       : "";
@@ -384,7 +394,7 @@
   // ---------- events ----------
   document.addEventListener("click", (e) => {
     if (e.target.closest("[data-action='cv']")) window.CV.download(data, lang);
-    const card = e.target.closest(".case[data-case]");
+    const card = e.target.closest(".case[data-case], .tl-media[data-case]");
     if (card) openCase(+card.dataset.case);
     if (e.target.closest(".nav-links a")) closeMenu();
   });
