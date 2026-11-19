@@ -32,7 +32,7 @@
       "en": "Elsharqia, Egypt",
       "ar": "الشرقية، مصر"
     },
-    "photo": "",
+    "photo": "assets/img/profile-1795096370514.jpg",
     "stats": [
       {
         "value": "5",
@@ -279,8 +279,8 @@
         },
         {
           "name": {
-            "en": "Dental Radiography",
-            "ar": "الأشعة السينية للأسنان"
+            "en": "Patient Communication",
+            "ar": "التواصل مع المرضى"
           },
           "level": {
             "en": "",
@@ -299,8 +299,8 @@
         },
         {
           "name": {
-            "en": "Patient Communication",
-            "ar": "التواصل مع المرضى"
+            "en": "Dental Radiography",
+            "ar": "الأشعة السينية للأسنان"
           },
           "level": {
             "en": "",
