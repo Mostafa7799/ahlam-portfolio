@@ -125,3 +125,9 @@ input[type="color"] { width: 48px; height: 36px; padding: 2px; border: 1px solid
   .list-row > :last-child, .bullet-row > :last-child { grid-column: 2; grid-row: 1; }
   .admin-bar .btn-label { display: none; }
 }
+
+/* Service icon picker */
+.svc-ic { width: 30px; height: 30px; border-radius: 9px; display: inline-grid; place-items: center; background: var(--tint); color: var(--accent); flex-shrink: 0; }
+.svc-ic svg { width: 18px; height: 18px; }
+.icon-pick { display: flex; gap: 10px; align-items: center; }
+.icon-pick select { max-width: 220px; }

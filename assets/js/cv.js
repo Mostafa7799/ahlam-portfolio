@@ -81,7 +81,7 @@
       text(summary);
     }
 
-    (data.sections || []).filter((s) => s.visible !== false && (s.items || []).length).forEach((s) => {
+    (data.sections || []).filter((s) => s.visible !== false && !P.isCards(s.type) && (s.items || []).length).forEach((s) => {
       const title = en(s.title) || s.id;
       if (P.isTimeline(s.type)) {
         heading(title);

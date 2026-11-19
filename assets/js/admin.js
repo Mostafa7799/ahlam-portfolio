@@ -8,6 +8,7 @@
   const DATA_PATH = "data/data.json";
 
   const SECTION_TYPES = {
+    services: "Services (cards)",
     education: "Education",
     experience: "Experience",
     projects: "Projects",
@@ -17,7 +18,7 @@
     custom: "Custom (timeline)"
   };
   const SECTION_TITLES_AR = {
-    education: "التعليم", experience: "الخبرات", projects: "المشاريع", certificates: "الشهادات",
+    services: "الخدمات", education: "التعليم", experience: "الخبرات", projects: "المشاريع", certificates: "الشهادات",
     skills: "المهارات", languages: "اللغات", custom: "قسم جديد"
   };
 
@@ -32,6 +33,9 @@
   const bi = () => ({ en: "", ar: "" });
   const timelineItem = () => ({ title: bi(), org: bi(), location: bi(), start: "", end: "", description: bi(), bullets: [] });
   const listItem = () => ({ name: bi(), level: bi() });
+  const serviceItem = () => ({ icon: "tooth", name: bi(), description: bi() });
+  const family = (type) => (P.isCards(type) ? "cards" : P.isTimeline(type) ? "timeline" : "list");
+  const ITEM_FOR = { cards: serviceItem, timeline: timelineItem, list: listItem };
 
   // Stable keys for <details> so open/closed state survives re-renders.
   const uids = new WeakMap();
@@ -69,13 +73,16 @@
   // Normalise data so every field the editor expects exists.
   function normalise(d) {
     d.settings = Object.assign({ themeColor: "#0f766e", defaultLanguage: "en", cvFileName: "CV" }, d.settings);
-    d.profile = Object.assign({ name: bi(), title: bi(), summary: bi(), phone: "", email: "", location: bi(), photo: "", links: [] }, d.profile);
-    ["name", "title", "summary", "location"].forEach((k) => {
+    d.profile = Object.assign({
+      name: bi(), shortName: bi(), title: bi(), tagline: bi(), summary: bi(),
+      phone: "", whatsapp: "", email: "", location: bi(), photo: "", stats: [], links: []
+    }, d.profile);
+    ["name", "shortName", "title", "tagline", "summary", "location"].forEach((k) => {
       if (typeof d.profile[k] === "string") d.profile[k] = { en: d.profile[k], ar: "" };
     });
     d.sections = (d.sections || []).map((s) => {
       s.title = typeof s.title === "string" ? { en: s.title, ar: "" } : Object.assign(bi(), s.title);
-      s.items = (s.items || []).map((it) => Object.assign(P.isTimeline(s.type) ? timelineItem() : listItem(), it));
+      s.items = (s.items || []).map((it) => Object.assign(ITEM_FOR[family(s.type)](), it));
       return s;
     });
     return d;
@@ -249,6 +256,14 @@
         <button class="icon-btn danger" type="button" data-act="remove" data-path="profile.links.${i}" title="Delete">✕</button>
       </div>`).join("");
 
+    const stats = (p.stats || []).map((st, i) => `
+      <div class="list-row three">
+        <input type="text" data-path="profile.stats.${i}.value" value="${esc(st.value)}" placeholder="Value (e.g. 5+)">
+        <input type="text" data-path="profile.stats.${i}.label.en" value="${esc(st.label && st.label.en)}" placeholder="Label (EN)">
+        <input type="text" dir="rtl" data-path="profile.stats.${i}.label.ar" value="${esc(st.label && st.label.ar)}" placeholder="الوصف (AR)">
+        <span style="display:flex;gap:4px">${controls("profile.stats." + i, i, p.stats.length)}</span>
+      </div>`).join("");
+
     return details("profile", `<span class="grow">Profile</span>`, `
       <div class="field"><span class="field-label">Photo</span>
         <div class="photo-row">
@@ -258,14 +273,21 @@
         </div>
         ${auth ? "" : `<p class="hint">Photo upload needs a GitHub token.</p>`}
       </div>
-      ${biField("Full name", "profile.name")}
+      ${biField("Full name (used in the CV)", "profile.name")}
+      ${biField("Display name (top of the site, e.g. Dr. Ahlam Abdelwadod)", "profile.shortName")}
       ${biField("Job title", "profile.title")}
+      ${biField("Tagline (one sentence under the name)", "profile.tagline", { multiline: true })}
       ${biField("Summary / About me", "profile.summary", { multiline: true })}
-      <div class="row">
+      <div class="row-3">
         ${textField("Phone", "profile.phone", "tel")}
+        ${textField("WhatsApp (with country code)", "profile.whatsapp", "tel", "201xxxxxxxxx")}
         ${textField("Email", "profile.email", "email")}
       </div>
       ${biField("Location", "profile.location")}
+      <div class="field"><span class="field-label">Highlights (numbers shown under the name)</span>
+        <div class="items">${stats}</div>
+        <div><button class="btn btn-sm" type="button" data-act="add" data-path="profile.stats" data-tpl="stat">+ Add highlight</button></div>
+      </div>
       <div class="field"><span class="field-label">Links</span>
         <div class="items">${links}</div>
         <div><button class="btn btn-sm" type="button" data-act="add" data-path="profile.links" data-tpl="link">+ Add link</button></div>
@@ -295,6 +317,18 @@
       </div>`, "item");
   }
 
+  function renderServiceItem(base, it, i, n) {
+    const options = Object.keys(window.Icons.SERVICE).map((k) =>
+      `<option value="${k}" ${it.icon === k ? "selected" : ""}>${k}</option>`).join("");
+    const summary = `<span class="svc-ic">${window.Icons.service(it.icon)}</span><span class="grow">${esc(P.tr(it.name, "en") || "New service")}</span>${controls(base, i, n)}`;
+    return details(uid(it), summary, `
+      <div class="field"><label>Icon</label>
+        <div class="icon-pick"><span class="svc-ic">${window.Icons.service(it.icon)}</span>
+        <select data-path="${base}.icon" data-rerender>${options}</select></div></div>
+      ${biField("Service name", base + ".name")}
+      ${biField("Short description", base + ".description", { multiline: true })}`, "item");
+  }
+
   function renderListItem(base, it, i, n, type) {
     return `
       <div class="list-row three">
@@ -308,10 +342,13 @@
 
   function renderSection(s, i, n) {
     const base = "sections." + i;
-    const timeline = P.isTimeline(s.type);
-    const items = s.items.map((it, j) =>
-      timeline ? renderTimelineItem(`${base}.items.${j}`, it, j, s.items.length)
-               : renderListItem(`${base}.items.${j}`, it, j, s.items.length, s.type)).join("");
+    const fam = family(s.type);
+    const items = s.items.map((it, j) => {
+      const path = `${base}.items.${j}`;
+      if (fam === "cards") return renderServiceItem(path, it, j, s.items.length);
+      if (fam === "timeline") return renderTimelineItem(path, it, j, s.items.length);
+      return renderListItem(path, it, j, s.items.length, s.type);
+    }).join("");
     const typeOptions = Object.keys(SECTION_TYPES).map((t) =>
       `<option value="${t}" ${s.type === t ? "selected" : ""}>${SECTION_TYPES[t]}</option>`).join("");
 
@@ -321,12 +358,12 @@
     return details(uid(s), summary, `
       <div class="row" style="align-items:end">
         <div class="field"><label>Section type</label><select data-path="${base}.type" data-rerender>${typeOptions}</select></div>
-        <label class="check"><input type="checkbox" data-path="${base}.visible" data-rerender ${s.visible !== false ? "checked" : ""}> Show on site and CV</label>
+        <label class="check"><input type="checkbox" data-path="${base}.visible" data-rerender ${s.visible !== false ? "checked" : ""}> Show on ${fam === "cards" ? "site (not in CV)" : "site and CV"}</label>
       </div>
       ${biField("Section title", base + ".title")}
       <div class="field"><span class="field-label">Items</span>
         <div class="items">${items || `<p class="hint">No items yet.</p>`}</div>
-        <div><button class="btn btn-sm" type="button" data-act="add" data-path="${base}.items" data-tpl="${timeline ? "timeline" : "list"}">+ Add ${timeline ? "item" : "entry"}</button></div>
+        <div><button class="btn btn-sm" type="button" data-act="add" data-path="${base}.items" data-tpl="${fam}">+ Add ${fam === "cards" ? "service" : fam === "timeline" ? "item" : "entry"}</button></div>
       </div>`, "panel");
   }
 
@@ -381,22 +418,32 @@
 
   // Keep the collapsed item/section label in sync while typing, without re-rendering.
   function updateSummaryLabel(el) {
-    if (!/\.title\.en$|\.org\.en$/.test(el.dataset.path)) return;
+    const path = el.dataset.path;
+    if (!/\.(title|org|name)\.en$/.test(path)) return;
     const det = el.closest("details");
     const label = det && det.querySelector(":scope > summary .grow");
     if (!label) return;
-    const obj = getAt(el.dataset.path.replace(/\.(title|org)\.en$/, ""));
-    label.textContent = P.tr(obj.title, "en") || P.tr(obj.org, "en") || (det.classList.contains("panel") ? "Untitled section" : "New item");
+    // Item fields inside a section panel (skills, languages) don't own the panel's label.
+    const isPanel = det.classList.contains("panel");
+    if (isPanel && !/^sections\.\d+\.title\.en$/.test(path)) return;
+    const obj = getAt(path.replace(/\.(title|org|name)\.en$/, ""));
+    label.textContent = P.tr(obj.title, "en") || P.tr(obj.name, "en") || P.tr(obj.org, "en") || (isPanel ? "Untitled section" : "New item");
   }
 
   function changeSectionType(path, type) {
     const s = getAt(path.replace(/\.type$/, ""));
-    const wasTimeline = P.isTimeline(s.type);
+    const from = family(s.type);
+    const to = family(type);
     s.type = type;
-    if (wasTimeline !== P.isTimeline(type)) {
-      s.items = s.items.map((it) => wasTimeline
-        ? Object.assign(listItem(), { name: it.title || bi() })
-        : Object.assign(timelineItem(), { title: it.name || bi() }));
+    if (from !== to) {
+      // Keep the item names when switching between cards, timeline and list layouts.
+      s.items = s.items.map((it) => {
+        const name = it.title || it.name || bi();
+        const item = ITEM_FOR[to]();
+        if (to === "timeline") item.title = name; else item.name = name;
+        if (it.description && to !== "list") item.description = it.description;
+        return item;
+      });
     }
     setDirty(true);
     renderEditor();
@@ -406,7 +453,9 @@
     link: () => ({ label: "", url: "" }),
     bullet: bi,
     timeline: timelineItem,
-    list: listItem
+    list: listItem,
+    cards: serviceItem,
+    stat: () => ({ value: "", label: bi() })
   };
 
   function onAction(e) {
@@ -421,7 +470,7 @@
       const item = TEMPLATES[btn.dataset.tpl]();
       arr.push(item);
       setAt(path, arr);
-      if (btn.dataset.tpl === "timeline") openKeys.add(uid(item));
+      if (btn.dataset.tpl === "timeline" || btn.dataset.tpl === "cards") openKeys.add(uid(item));
     } else if (act === "remove") {
       if (!confirm("Delete this?")) return;
       const parts = path.split(".");

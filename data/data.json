@@ -1,6 +1,6 @@
 {
   "settings": {
-    "themeColor": "#0f766e",
+    "themeColor": "#0e7c86",
     "defaultLanguage": "en",
     "cvFileName": "Ahlam_Abdelwadod_CV"
   },
@@ -9,21 +9,53 @@
       "en": "Ahlam Ali Ahmed Abdelwadod Mohamed",
       "ar": "أحلام علي أحمد عبد الودود محمد"
     },
+    "shortName": {
+      "en": "Dr. Ahlam Abdelwadod",
+      "ar": "د. أحلام عبد الودود"
+    },
     "title": {
-      "en": "Your Job Title",
-      "ar": "المسمى الوظيفي"
+      "en": "Dentist",
+      "ar": "طبيبة أسنان"
+    },
+    "tagline": {
+      "en": "Gentle, patient-centred dental care focused on healthy, confident smiles.",
+      "ar": "رعاية أسنان لطيفة تتمحور حول المريض، من أجل ابتسامة صحية وواثقة."
     },
     "summary": {
-      "en": "Motivated graduate with a strong academic background and a passion for continuous learning. Edit this summary from the admin page to describe your goals, strengths and the kind of role you are looking for.",
-      "ar": "خريجة طموحة ذات خلفية أكاديمية قوية وشغف بالتعلم المستمر. عدّلي هذا الملخص من صفحة الإدارة لوصف أهدافك ونقاط قوتك ونوع الوظيفة التي تبحثين عنها."
+      "en": "Dentist with hands-on clinical training in examination, diagnosis, restorative and preventive dentistry. I am committed to evidence-based treatment, strict infection control and making every patient feel comfortable and informed throughout their care.",
+      "ar": "طبيبة أسنان ذات تدريب سريري عملي في الفحص والتشخيص وطب الأسنان العلاجي والوقائي. ألتزم بالعلاج المبني على الأدلة العلمية، وبمعايير صارمة لمكافحة العدوى، وبأن يشعر كل مريض بالراحة والاطمئنان طوال فترة علاجه."
     },
     "phone": "01102174102",
+    "whatsapp": "201102174102",
     "email": "a.abdelwadod3550@su.edu.eg",
     "location": {
       "en": "Elsharqia, Egypt",
       "ar": "الشرقية، مصر"
     },
     "photo": "",
+    "stats": [
+      {
+        "value": "5",
+        "label": {
+          "en": "Years of dental study",
+          "ar": "سنوات دراسة طب الأسنان"
+        }
+      },
+      {
+        "value": "BDS",
+        "label": {
+          "en": "Bachelor of Dental Surgery",
+          "ar": "بكالوريوس طب وجراحة الفم والأسنان"
+        }
+      },
+      {
+        "value": "2",
+        "label": {
+          "en": "Languages",
+          "ar": "لغات"
+        }
+      }
+    ],
     "links": [
       {
         "label": "LinkedIn",
@@ -33,34 +65,79 @@
   },
   "sections": [
     {
-      "id": "education",
-      "type": "education",
+      "id": "services",
+      "type": "services",
       "visible": true,
       "title": {
-        "en": "Education",
-        "ar": "التعليم"
+        "en": "Services",
+        "ar": "الخدمات"
       },
       "items": [
         {
-          "title": {
-            "en": "Bachelor's Degree in (Your Major)",
-            "ar": "بكالوريوس في (التخصص)"
+          "icon": "shield",
+          "name": {
+            "en": "Check-ups & Cleaning",
+            "ar": "الفحص والتنظيف"
           },
-          "org": {
-            "en": "Your University",
-            "ar": "الجامعة"
-          },
-          "location": {
-            "en": "Egypt",
-            "ar": "مصر"
-          },
-          "start": "09/2021",
-          "end": "06/2025",
           "description": {
-            "en": "Grade: (Your grade)",
-            "ar": "التقدير: (التقدير)"
+            "en": "Routine examinations, scaling and polishing to keep teeth and gums healthy.",
+            "ar": "فحوصات دورية وتنظيف وتلميع للحفاظ على صحة الأسنان واللثة."
+          }
+        },
+        {
+          "icon": "tooth",
+          "name": {
+            "en": "Fillings & Restorations",
+            "ar": "الحشوات والترميمات"
           },
-          "bullets": []
+          "description": {
+            "en": "Tooth-coloured composite fillings that restore function and a natural look.",
+            "ar": "حشوات تجميلية بلون الأسنان تعيد الوظيفة والمظهر الطبيعي."
+          }
+        },
+        {
+          "icon": "heart",
+          "name": {
+            "en": "Root Canal Treatment",
+            "ar": "علاج العصب"
+          },
+          "description": {
+            "en": "Comfortable endodontic treatment to relieve pain and save natural teeth.",
+            "ar": "علاج عصب مريح لتخفيف الألم والحفاظ على الأسنان الطبيعية."
+          }
+        },
+        {
+          "icon": "syringe",
+          "name": {
+            "en": "Tooth Extraction",
+            "ar": "خلع الأسنان"
+          },
+          "description": {
+            "en": "Simple extractions performed gently, with clear aftercare guidance.",
+            "ar": "خلع بسيط بلطف مع إرشادات واضحة للعناية بعد الخلع."
+          }
+        },
+        {
+          "icon": "sparkle",
+          "name": {
+            "en": "Teeth Whitening",
+            "ar": "تبييض الأسنان"
+          },
+          "description": {
+            "en": "Safe whitening options for a brighter, more confident smile.",
+            "ar": "خيارات تبييض آمنة لابتسامة أكثر إشراقًا وثقة."
+          }
+        },
+        {
+          "icon": "smile",
+          "name": {
+            "en": "Oral Hygiene Guidance",
+            "ar": "إرشادات صحة الفم"
+          },
+          "description": {
+            "en": "Personal advice on brushing, flossing and diet to prevent decay.",
+            "ar": "نصائح شخصية للتفريش والخيط الطبي والتغذية للوقاية من التسوس."
+          }
         }
       ]
     },
@@ -75,63 +152,67 @@
       "items": [
         {
           "title": {
-            "en": "Intern / Trainee",
-            "ar": "متدربة"
+            "en": "Dental Intern",
+            "ar": "طبيبة امتياز"
           },
           "org": {
-            "en": "Company Name",
-            "ar": "اسم الشركة"
+            "en": "(Hospital / Clinic name)",
+            "ar": "(اسم المستشفى / العيادة)"
           },
           "location": {
             "en": "Egypt",
             "ar": "مصر"
           },
-          "start": "07/2024",
-          "end": "09/2024",
+          "start": "03/2025",
+          "end": "Present",
           "description": {
             "en": "",
             "ar": ""
           },
           "bullets": [
             {
-              "en": "Describe a responsibility or achievement.",
-              "ar": "اكتبي مسؤولية أو إنجازًا."
+              "en": "Examined, diagnosed and treated patients under supervision across restorative, endodontic, periodontal and oral surgery clinics.",
+              "ar": "فحص وتشخيص وعلاج المرضى تحت الإشراف في عيادات العلاج التحفظي والعصب واللثة وجراحة الفم."
             },
             {
-              "en": "Use numbers where possible (e.g. improved X by 20%).",
-              "ar": "استخدمي الأرقام قدر الإمكان."
+              "en": "Followed strict infection-control and sterilisation protocols.",
+              "ar": "الالتزام الصارم ببروتوكولات مكافحة العدوى والتعقيم."
+            },
+            {
+              "en": "Explained treatment plans clearly to patients and their families.",
+              "ar": "شرح خطط العلاج بوضوح للمرضى وذويهم."
             }
           ]
         }
       ]
     },
     {
-      "id": "projects",
-      "type": "projects",
+      "id": "education",
+      "type": "education",
       "visible": true,
       "title": {
-        "en": "Projects",
-        "ar": "المشاريع"
+        "en": "Education",
+        "ar": "التعليم"
       },
       "items": [
         {
           "title": {
-            "en": "Graduation Project",
-            "ar": "مشروع التخرج"
+            "en": "Bachelor of Dental Surgery (BDS)",
+            "ar": "بكالوريوس طب وجراحة الفم والأسنان"
           },
           "org": {
-            "en": "",
-            "ar": ""
+            "en": "Faculty of Dentistry, (University name)",
+            "ar": "كلية طب الأسنان، (اسم الجامعة)"
           },
           "location": {
-            "en": "",
-            "ar": ""
+            "en": "Egypt",
+            "ar": "مصر"
           },
-          "start": "",
-          "end": "06/2025",
+          "start": "09/2019",
+          "end": "06/2024",
           "description": {
-            "en": "Short description of the project and your role.",
-            "ar": "وصف مختصر للمشروع ودورك فيه."
+            "en": "Grade: (Your grade)",
+            "ar": "التقدير: (التقدير)"
           },
           "bullets": []
         }
@@ -142,14 +223,14 @@
       "type": "skills",
       "visible": true,
       "title": {
-        "en": "Skills",
-        "ar": "المهارات"
+        "en": "Clinical Skills",
+        "ar": "المهارات السريرية"
       },
       "items": [
         {
           "name": {
-            "en": "Microsoft Office",
-            "ar": "مايكروسوفت أوفيس"
+            "en": "Diagnosis & Treatment Planning",
+            "ar": "التشخيص ووضع خطة العلاج"
           },
           "level": {
             "en": "",
@@ -158,8 +239,8 @@
         },
         {
           "name": {
-            "en": "Communication",
-            "ar": "التواصل"
+            "en": "Restorative Dentistry",
+            "ar": "طب الأسنان التحفظي"
           },
           "level": {
             "en": "",
@@ -168,8 +249,8 @@
         },
         {
           "name": {
-            "en": "Teamwork",
-            "ar": "العمل الجماعي"
+            "en": "Endodontics",
+            "ar": "علاج الجذور والعصب"
           },
           "level": {
             "en": "",
@@ -178,8 +259,48 @@
         },
         {
           "name": {
-            "en": "Problem Solving",
-            "ar": "حل المشكلات"
+            "en": "Periodontal Therapy",
+            "ar": "علاج اللثة"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Simple Extractions",
+            "ar": "الخلع البسيط"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Dental Radiography",
+            "ar": "الأشعة السينية للأسنان"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Infection Control",
+            "ar": "مكافحة العدوى"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Patient Communication",
+            "ar": "التواصل مع المرضى"
           },
           "level": {
             "en": "",
@@ -189,18 +310,50 @@
       ]
     },
     {
-      "id": "certificates",
-      "type": "certificates",
+      "id": "projects",
+      "type": "projects",
       "visible": true,
       "title": {
-        "en": "Certifications",
-        "ar": "الشهادات"
+        "en": "Research & Projects",
+        "ar": "الأبحاث والمشاريع"
       },
       "items": [
         {
           "title": {
-            "en": "Certificate Name",
-            "ar": "اسم الشهادة"
+            "en": "Graduation Research Project",
+            "ar": "مشروع بحث التخرج"
+          },
+          "org": {
+            "en": "",
+            "ar": ""
+          },
+          "location": {
+            "en": "",
+            "ar": ""
+          },
+          "start": "",
+          "end": "06/2024",
+          "description": {
+            "en": "Short description of the research topic and your role.",
+            "ar": "وصف مختصر لموضوع البحث ودورك فيه."
+          },
+          "bullets": []
+        }
+      ]
+    },
+    {
+      "id": "certificates",
+      "type": "certificates",
+      "visible": true,
+      "title": {
+        "en": "Certifications & Courses",
+        "ar": "الشهادات والدورات"
+      },
+      "items": [
+        {
+          "title": {
+            "en": "Certificate / Course name",
+            "ar": "اسم الشهادة / الدورة"
           },
           "org": {
             "en": "Issuer",

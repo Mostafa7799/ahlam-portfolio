@@ -47,7 +47,7 @@
         html += `<p class="cv-contact">${contact}</p>`;
         if (t(p.summary)) html += `<h2>${P.ui("summary", lang)}</h2><p>${P.esc(t(p.summary))}</p>`;
 
-        (data.sections || []).filter((s) => s.visible !== false && (s.items || []).length).forEach((s) => {
+        (data.sections || []).filter((s) => s.visible !== false && !P.isCards(s.type) && (s.items || []).length).forEach((s) => {
           html += `<h2>${P.esc(t(s.title))}</h2>`;
           if (P.isTimeline(s.type)) {
             s.items.forEach((it) => {

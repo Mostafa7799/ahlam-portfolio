@@ -1,119 +1,262 @@
 // Public portfolio: renders everything from data/data.json.
 (function () {
   const P = window.Portfolio;
+  const I = window.Icons.UI;
+  const esc = P.esc;
   const app = document.getElementById("app");
+  const nav = document.getElementById("nav");
+  const navLinks = document.getElementById("navLinks");
+  const navToggle = document.getElementById("navToggle");
   const langBtn = document.getElementById("langBtn");
   const isPreview = new URLSearchParams(location.search).has("preview");
 
   let data = null;
   let lang = "en";
 
-  const ICONS = {
-    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
-    phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.1 9.9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
-    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>',
-    pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
-    link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>'
-  };
+  const t = (v) => P.tr(v, lang);
+  const ui = (k) => P.ui(k, lang);
+  const TYPE_ICON = { education: I.cap, experience: I.briefcase, projects: I.book, certificates: I.award, custom: I.check };
+  const waLink = (n) => "https://wa.me/" + String(n || "").replace(/\D/g, "");
+  const hasItems = (s) => s.visible !== false && (s.items || []).length > 0;
 
-  function initials(name) {
-    return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  function displayName(p) {
+    return t(p.shortName) || t(p.name);
   }
 
-  function renderHero(p) {
-    const name = P.tr(p.name, lang);
-    const avatar = p.photo
-      ? `<img class="avatar" src="${P.esc(p.photo)}" alt="${P.esc(name)}">`
-      : `<div class="avatar" aria-hidden="true">${P.esc(initials(name))}</div>`;
+  // Highlight the last word of the name in the accent color.
+  function nameHtml(name) {
+    const words = name.trim().split(/\s+/);
+    if (words.length < 2) return esc(name);
+    const last = words.pop();
+    return `${esc(words.join(" "))} <span class="accent">${esc(last)}</span>`;
+  }
 
-    const contacts = [];
-    if (p.phone) contacts.push(`<li>${ICONS.phone}<a class="ltr-num" href="tel:${P.esc(p.phone)}">${P.esc(p.phone)}</a></li>`);
-    if (p.email) contacts.push(`<li>${ICONS.mail}<a href="mailto:${P.esc(p.email)}">${P.esc(p.email)}</a></li>`);
-    const loc = P.tr(p.location, lang);
-    if (loc) contacts.push(`<li>${ICONS.pin}<span>${P.esc(loc)}</span></li>`);
-    (p.links || []).filter((l) => l.url).forEach((l) => {
-      contacts.push(`<li>${ICONS.link}<a href="${P.esc(l.url)}" target="_blank" rel="noopener">${P.esc(l.label || l.url)}</a></li>`);
-    });
+  function sectionHead(eyebrow, title) {
+    return `<div class="section-head reveal"><span class="eyebrow">${esc(eyebrow)}</span><h2>${esc(title)}</h2></div>`;
+  }
+
+  // ---------- hero ----------
+  function renderHero(p) {
+    const photo = p.photo
+      ? `<img src="${esc(p.photo)}" alt="${esc(displayName(p))}">`
+      : `<div class="photo-placeholder">${window.Icons.SERVICE.tooth}</div>`;
+
+    const stats = (p.stats || []).filter((s) => s.value || t(s.label));
+    const edu = (data.sections || []).find((s) => s.type === "education" && hasItems(s));
+    const firstEdu = edu && edu.items[0];
+    const loc = t(p.location);
 
     return `
-      <section class="hero">
-        <div class="hero-card">
-          ${avatar}
-          <div>
-            <h1>${P.esc(name)}</h1>
-            <p class="title">${P.esc(P.tr(p.title, lang))}</p>
-            <ul class="contact-list">${contacts.join("")}</ul>
-            <div class="hero-actions">
-              <button class="btn btn-primary" type="button" data-action="cv">${ICONS.download}${P.ui("downloadCv", lang)}</button>
-              ${p.email ? `<a class="btn" href="mailto:${P.esc(p.email)}">${ICONS.mail}${P.ui("contact", lang)}</a>` : ""}
+      <section class="hero" id="top">
+        <div class="container hero-grid">
+          <div class="hero-text">
+            <span class="pill reveal">${window.Icons.SERVICE.tooth}${esc(t(p.title))}</span>
+            <h1 class="reveal">${nameHtml(displayName(p))}</h1>
+            ${t(p.tagline) ? `<p class="lead reveal">${esc(t(p.tagline))}</p>` : ""}
+            <div class="hero-actions reveal">
+              <button class="btn btn-primary" type="button" data-action="cv">${I.download}${ui("downloadCv")}</button>
+              <a class="btn" href="#contact">${I.mail}${ui("contactMe")}</a>
             </div>
+            ${stats.length ? `<ul class="stats reveal">${stats.map((s) =>
+              `<li class="stat"><strong>${esc(s.value)}</strong><span>${esc(t(s.label))}</span></li>`).join("")}</ul>` : ""}
+          </div>
+          <div class="hero-visual reveal">
+            <div class="photo-frame">${photo}</div>
+            ${loc ? `<div class="float-card fc-1"><span class="ic">${I.pin}</span><div><strong>${esc(t(p.title))}</strong><span>${esc(loc)}</span></div></div>` : ""}
+            ${firstEdu ? `<div class="float-card fc-2"><span class="ic">${I.cap}</span><div><strong>${esc(t(firstEdu.title))}</strong><span>${esc(t(firstEdu.org))}</span></div></div>` : ""}
           </div>
         </div>
       </section>`;
   }
 
-  function renderTimelineItem(it) {
-    const title = P.tr(it.title, lang);
-    const org = [P.tr(it.org, lang), P.tr(it.location, lang)].filter(Boolean).join(" · ");
-    const desc = P.tr(it.description, lang);
-    const bullets = (it.bullets || []).map((b) => P.tr(b, lang)).filter(Boolean);
-    const date = P.dateRange(it, lang);
+  // ---------- about ----------
+  function renderAbout(p, alt) {
+    const summary = t(p.summary);
+    const facts = [
+      [I.user, ui("fullName"), `<b>${esc(t(p.name))}</b>`],
+      t(p.title) && [window.Icons.SERVICE.tooth, ui("specialty"), `<b>${esc(t(p.title))}</b>`],
+      t(p.location) && [I.pin, ui("location"), `<b>${esc(t(p.location))}</b>`],
+      p.phone && [I.phone, ui("phone"), `<a class="ltr" href="tel:${esc(p.phone)}">${esc(p.phone)}</a>`],
+      p.email && [I.mail, ui("email"), `<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>`]
+    ].concat((p.links || []).filter((l) => l.url).map((l) =>
+      [I.link, esc(l.label || "Link"), `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url.replace(/^https?:\/\/(www\.)?/, ""))}</a>`]
+    )).filter(Boolean);
+
     return `
-      <li class="tl-item">
-        <div class="tl-head">
-          <span class="tl-title">${P.esc(title)}</span>
-          ${date ? `<span class="tl-date">${P.esc(date)}</span>` : ""}
+      <section class="band${alt ? " alt" : ""}" id="about">
+        <div class="container about-grid">
+          <div class="about-text">
+            ${sectionHead(ui("aboutEyebrow"), ui("about"))}
+            ${summary ? `<p class="reveal">${esc(summary)}</p>` : ""}
+          </div>
+          <aside class="facts reveal">
+            <h3>${ui("quickFacts")}</h3>
+            <ul>${facts.map(([ic, label, val]) => `<li><span class="ic">${ic}</span><div><small>${label}</small>${val}</div></li>`).join("")}</ul>
+          </aside>
         </div>
-        ${org ? `<div class="tl-org">${P.esc(org)}</div>` : ""}
-        ${desc ? `<p class="tl-desc">${P.esc(desc)}</p>` : ""}
-        ${bullets.length ? `<ul>${bullets.map((b) => `<li>${P.esc(b)}</li>`).join("")}</ul>` : ""}
-      </li>`;
+      </section>`;
   }
 
-  function renderSection(s) {
-    const items = s.items || [];
-    if (!items.length) return "";
+  // ---------- sections ----------
+  function renderTimeline(s) {
+    return `<ol class="timeline">${s.items.map((it) => {
+      const title = t(it.title) || t(it.org);
+      const org = [t(it.title) ? t(it.org) : "", t(it.location)].filter(Boolean).join(" · ");
+      const date = P.dateRange(it, lang);
+      const bullets = (it.bullets || []).map(t).filter(Boolean);
+      return `
+        <li class="tl reveal">
+          <span class="tl-dot">${TYPE_ICON[s.type] || I.check}</span>
+          <div class="tl-card">
+            <div class="tl-top"><h3>${esc(title)}</h3>${date ? `<span class="tl-date">${I.calendar}${esc(date)}</span>` : ""}</div>
+            ${org ? `<p class="tl-org">${esc(org)}</p>` : ""}
+            ${t(it.description) ? `<p class="tl-desc">${esc(t(it.description))}</p>` : ""}
+            ${bullets.length ? `<ul class="tl-bullets">${bullets.map((b) => `<li>${I.check}<span>${esc(b)}</span></li>`).join("")}</ul>` : ""}
+          </div>
+        </li>`;
+    }).join("")}</ol>`;
+  }
+
+  function renderServices(s) {
+    return `<div class="services">${s.items.map((it) => `
+      <article class="service reveal">
+        <span class="service-icon">${window.Icons.service(it.icon)}</span>
+        <h3>${esc(t(it.name))}</h3>
+        ${t(it.description) ? `<p>${esc(t(it.description))}</p>` : ""}
+      </article>`).join("")}</div>`;
+  }
+
+  function renderSkills(s) {
+    return `<ul class="skills">${s.items.filter((it) => t(it.name)).map((it) => `
+      <li class="skill reveal"><span class="ic">${I.check}</span><span>${esc(t(it.name))}</span>${t(it.level) ? `<small>${esc(t(it.level))}</small>` : ""}</li>`).join("")}</ul>`;
+  }
+
+  function renderLanguages(s) {
+    return `<ul class="langs">${s.items.filter((it) => t(it.name)).map((it) => `
+      <li class="lang-card reveal"><span class="ic">${I.globe}</span><div><strong>${esc(t(it.name))}</strong>${t(it.level) ? `<span>${esc(t(it.level))}</span>` : ""}</div></li>`).join("")}</ul>`;
+  }
+
+  function renderSection(s, alt) {
     let body;
-    if (P.isTimeline(s.type)) {
-      body = `<ul class="timeline">${items.map(renderTimelineItem).join("")}</ul>`;
-    } else {
-      body = `<ul class="chips">${items.map((it) => {
-        const level = P.tr(it.level, lang);
-        return `<li class="chip">${P.esc(P.tr(it.name, lang))}${level ? `<small>${P.esc(level)}</small>` : ""}</li>`;
-      }).join("")}</ul>`;
-    }
-    return `<section class="section" id="${P.esc(s.id)}"><h2>${P.esc(P.tr(s.title, lang))}</h2>${body}</section>`;
+    if (P.isCards(s.type)) body = renderServices(s);
+    else if (P.isTimeline(s.type)) body = renderTimeline(s);
+    else if (s.type === "languages") body = renderLanguages(s);
+    else body = renderSkills(s);
+    return `
+      <section class="band${alt ? " alt" : ""}" id="${esc(s.id)}">
+        <div class="container">
+          ${sectionHead(ui("eyebrow_" + s.type), t(s.title))}
+          ${body}
+        </div>
+      </section>`;
   }
 
+  // ---------- contact ----------
+  function renderContact(p) {
+    const rows = [
+      p.whatsapp && `<a href="${waLink(p.whatsapp)}" target="_blank" rel="noopener"><span class="ic">${I.whatsapp}</span><div><small>${ui("whatsapp")}</small><b class="ltr">+${esc(String(p.whatsapp).replace(/\D/g, ""))}</b></div></a>`,
+      p.phone && `<a href="tel:${esc(p.phone)}"><span class="ic">${I.phone}</span><div><small>${ui("phone")}</small><b class="ltr">${esc(p.phone)}</b></div></a>`,
+      p.email && `<a href="mailto:${esc(p.email)}"><span class="ic">${I.mail}</span><div><small>${ui("email")}</small><b>${esc(p.email)}</b></div></a>`,
+      t(p.location) && `<div><span class="ic">${I.pin}</span><div><small>${ui("location")}</small><b>${esc(t(p.location))}</b></div></div>`
+    ].filter(Boolean);
+
+    return `
+      <section class="contact" id="contact">
+        <div class="container">
+          <div class="contact-card reveal">
+            <div style="position:relative;z-index:1">
+              <span class="eyebrow">${ui("contactEyebrow")}</span>
+              <h2>${ui("contactTitle")}</h2>
+              <p>${ui("contactText")}</p>
+              <div class="hero-actions">
+                ${p.whatsapp ? `<a class="btn btn-wa" href="${waLink(p.whatsapp)}" target="_blank" rel="noopener">${I.whatsapp}${ui("chatWhatsapp")}</a>` : ""}
+                <button class="btn btn-light" type="button" data-action="cv">${I.download}${ui("downloadCv")}</button>
+              </div>
+            </div>
+            <ul class="contact-list">${rows.map((r) => `<li>${r}</li>`).join("")}</ul>
+          </div>
+        </div>
+      </section>`;
+  }
+
+  // ---------- page ----------
   function render() {
     if (!data) return;
     const p = data.profile || {};
+    const name = displayName(p);
     P.applyDir(lang);
     if (data.settings && data.settings.themeColor) {
       document.documentElement.style.setProperty("--accent", data.settings.themeColor);
     }
-    const name = P.tr(p.name, lang);
-    document.title = name + " | Portfolio";
-    document.getElementById("brand").textContent = name;
-    langBtn.textContent = P.ui("langToggle", lang);
+    document.title = name + (t(p.title) ? " | " + t(p.title) : "");
 
-    const summary = P.tr(p.summary, lang);
+    const sections = (data.sections || []).filter(hasItems);
+
+    // Navigation: About, the first few sections, Contact.
+    document.getElementById("brandMark").innerHTML = window.Icons.SERVICE.tooth;
+    document.getElementById("brandName").textContent = name;
+    langBtn.textContent = ui("langToggle");
+    navToggle.innerHTML = I.menu;
+    navLinks.innerHTML = [`<a href="#about">${ui("about")}</a>`]
+      .concat(sections.slice(0, 4).map((s) => `<a href="#${esc(s.id)}">${esc(t(s.title))}</a>`))
+      .concat(`<a href="#contact">${ui("contact")}</a>`).join("");
+
     app.innerHTML =
       renderHero(p) +
-      (summary ? `<section class="section" id="about"><h2>${P.ui("about", lang)}</h2><p class="summary">${P.esc(summary)}</p></section>` : "") +
-      (data.sections || []).filter((s) => s.visible !== false).map(renderSection).join("");
+      renderAbout(p, false) +
+      sections.map((s, i) => renderSection(s, i % 2 === 0)).join("") +
+      renderContact(p);
 
-    document.getElementById("footer").textContent = "© " + new Date().getFullYear() + " " + name;
+    document.getElementById("footer").innerHTML = `
+      <div class="container">
+        <a class="brand" href="#top"><span class="brand-mark">${window.Icons.SERVICE.tooth}</span><span class="brand-name">${esc(name)}</span></a>
+        <span>© ${new Date().getFullYear()} ${esc(t(p.name))}. ${ui("rights")}</span>
+      </div>`;
+
+    reveal();
   }
 
-  app.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-action='cv']");
-    if (btn) window.CV.download(data, lang);
+  // Fade sections in as they scroll into view.
+  let observer = null;
+  function reveal() {
+    const els = app.querySelectorAll(".reveal");
+    if (isPreview || !("IntersectionObserver" in window)) {
+      els.forEach((el) => el.classList.add("in"));
+      return;
+    }
+    if (observer) observer.disconnect();
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add("in"); observer.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    els.forEach((el) => observer.observe(el));
+  }
+
+  function closeMenu() {
+    nav.classList.remove("open");
+    navToggle.setAttribute("aria-expanded", "false");
+    navToggle.innerHTML = I.menu;
+  }
+
+  // ---------- events ----------
+  document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-action='cv']")) window.CV.download(data, lang);
+    if (e.target.closest(".nav-links a")) closeMenu();
   });
+
+  navToggle.addEventListener("click", () => {
+    const open = nav.classList.toggle("open");
+    navToggle.setAttribute("aria-expanded", String(open));
+    navToggle.innerHTML = open ? I.close : I.menu;
+  });
+
+  window.addEventListener("scroll", () => nav.classList.toggle("scrolled", window.scrollY > 8), { passive: true });
 
   langBtn.addEventListener("click", () => {
     lang = lang === "ar" ? "en" : "ar";
     if (!isPreview) P.setLang(lang);
+    closeMenu();
     render();
   });
 
@@ -126,6 +269,7 @@
   });
 
   if (isPreview) {
+    document.documentElement.classList.add("no-anim");
     window.parent.postMessage({ type: "preview-ready" }, location.origin);
   }
 

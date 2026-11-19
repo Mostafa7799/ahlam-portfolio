@@ -15,7 +15,27 @@
       back: "Back to portfolio",
       phone: "Phone",
       location: "Location",
-      summary: "Summary"
+      summary: "Summary",
+      contactMe: "Contact Me",
+      menu: "Menu",
+      aboutEyebrow: "Get to know me",
+      quickFacts: "At a glance",
+      fullName: "Full name",
+      specialty: "Specialty",
+      contactEyebrow: "Get in touch",
+      contactTitle: "Let's talk",
+      contactText: "Have a question, an opportunity or want to book a visit? Reach out on WhatsApp, by phone or by email.",
+      whatsapp: "WhatsApp",
+      chatWhatsapp: "Chat on WhatsApp",
+      rights: "All rights reserved.",
+      eyebrow_education: "Academic background",
+      eyebrow_experience: "Clinical journey",
+      eyebrow_projects: "Research & projects",
+      eyebrow_certificates: "Continuing education",
+      eyebrow_skills: "Expertise",
+      eyebrow_languages: "Communication",
+      eyebrow_services: "What I offer",
+      eyebrow_custom: "More about me"
     },
     ar: {
       downloadCv: "تحميل السيرة الذاتية",
@@ -31,7 +51,27 @@
       back: "العودة إلى الموقع",
       phone: "الهاتف",
       location: "العنوان",
-      summary: "الملخص"
+      summary: "الملخص",
+      contactMe: "تواصل معي",
+      menu: "القائمة",
+      aboutEyebrow: "تعرّف عليّ",
+      quickFacts: "لمحة سريعة",
+      fullName: "الاسم الكامل",
+      specialty: "التخصص",
+      contactEyebrow: "تواصل",
+      contactTitle: "لنتحدث",
+      contactText: "لديك سؤال أو فرصة عمل أو تريد حجز موعد؟ تواصل معي عبر واتساب أو الهاتف أو البريد الإلكتروني.",
+      whatsapp: "واتساب",
+      chatWhatsapp: "راسلني على واتساب",
+      rights: "جميع الحقوق محفوظة.",
+      eyebrow_education: "المسيرة الأكاديمية",
+      eyebrow_experience: "المسيرة السريرية",
+      eyebrow_projects: "الأبحاث والمشاريع",
+      eyebrow_certificates: "التعليم المستمر",
+      eyebrow_skills: "المهارات",
+      eyebrow_languages: "التواصل",
+      eyebrow_services: "ما أقدمه",
+      eyebrow_custom: "المزيد عني"
     }
   };
 
@@ -90,6 +130,8 @@
 
   const TIMELINE_TYPES = ["education", "experience", "projects", "certificates", "custom"];
   const isTimeline = (type) => TIMELINE_TYPES.includes(type);
+  // "services" sections are cards on the site and are left out of the CV.
+  const isCards = (type) => type === "services";
 
-  window.Portfolio = { getLang, setLang, applyDir, tr, ui, loadData, esc, dateRange, isTimeline };
+  window.Portfolio = { getLang, setLang, applyDir, tr, ui, loadData, esc, dateRange, isTimeline, isCards };
 })();
