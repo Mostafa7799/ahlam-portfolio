@@ -24,10 +24,15 @@ html[lang="ar"] body { font-family: "Cairo", Tahoma, Arial, sans-serif; }
 h1 { font-size: 20pt; margin: 0; line-height: 1.2; }
 .cv-title { font-size: 12pt; color: var(--muted); margin: 2px 0 4px; }
 .cv-contact { color: var(--muted); margin: 0; font-size: 10pt; }
-.cv-contact span + span::before { content: " | "; }
+.cv-contact span + span::before { content: "  |  "; }
+.cv-contact a { color: #0e7c86; text-decoration: none; }
+.cv-title { color: #0e7c86; }
+h1 { color: #0f2a3d; }
+.cv-contact { padding-bottom: 8px; border-bottom: 2px solid #0e7c86; line-height: 1.7; }
+html[lang="en"] .org { font-style: italic; }
 h2 {
-  font-size: 11.5pt; text-transform: uppercase; margin: 14px 0 6px; padding-bottom: 2px;
-  border-bottom: 1px solid #888; letter-spacing: .02em;
+  font-size: 11pt; text-transform: uppercase; margin: 14px 0 6px; padding-bottom: 3px;
+  border-bottom: 1px solid #cdd4da; color: #0e7c86;
 }
 html[lang="ar"] h2 { letter-spacing: 0; }
 .item { margin: 0 0 8px; break-inside: avoid; }

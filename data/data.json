@@ -2,7 +2,8 @@
   "settings": {
     "themeColor": "#0e7c86",
     "defaultLanguage": "en",
-    "cvFileName": "Ahlam_Abdelwadod_CV"
+    "cvFileName": "Ahlam_Abdelwadod_CV",
+    "portfolioUrl": "https://mostafa7799.github.io/dr-ahlam/"
   },
   "profile": {
     "name": {
@@ -441,7 +442,7 @@
     {
       "id": "projects",
       "type": "projects",
-      "visible": true,
+      "visible": false,
       "title": {
         "en": "Research & Projects",
         "ar": "الأبحاث والمشاريع"

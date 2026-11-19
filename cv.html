@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/cv.css?v=6">
+  <link rel="stylesheet" href="assets/css/cv.css?v=7">
 </head>
 <body>
   <div class="toolbar">
@@ -17,7 +17,7 @@
   </div>
   <article class="page" id="cv"></article>
 
-  <script src="assets/js/i18n.js?v=6"></script>
+  <script src="assets/js/i18n.js?v=7"></script>
   <script>
     (function () {
       const P = window.Portfolio;
@@ -35,11 +35,13 @@
         const name = t(p.name);
         document.title = name + " - CV";
 
+        const portfolio = (data.settings && data.settings.portfolioUrl) || (/^https?:$/.test(location.protocol) ? location.origin + location.pathname.replace(/[^/]*$/, "") : "");
         const contact = [
           p.phone && `<span class="ltr">${P.esc(p.phone)}</span>`,
           p.email && `<span class="ltr">${P.esc(p.email)}</span>`,
           t(p.location) && `<span>${P.esc(t(p.location))}</span>`
-        ].concat((p.links || []).filter((l) => l.url).map((l) => `<span class="ltr">${P.esc(l.url)}</span>`))
+        ].concat(portfolio ? [`<span><b>${lang === "ar" ? "الموقع" : "Portfolio"}:</b> <a class="ltr" href="${P.esc(portfolio)}">${P.esc(portfolio.replace(/^https?:\/\//, "").replace(/\/$/, ""))}</a></span>`] : [])
+          .concat((p.links || []).filter((l) => l.url).map((l) => `<span><b>${P.esc(l.label || "Link")}:</b> <a class="ltr" href="${P.esc(l.url)}">${P.esc(l.url.replace(/^https?:\/\/(www\.)?/, ""))}</a></span>`))
           .filter(Boolean).join("");
 
         let html = `<h1>${P.esc(name)}</h1>`;

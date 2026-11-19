@@ -80,7 +80,7 @@
 
   // Normalise data so every field the editor expects exists.
   function normalise(d) {
-    d.settings = Object.assign({ themeColor: "#0f766e", defaultLanguage: "en", cvFileName: "CV" }, d.settings);
+    d.settings = Object.assign({ themeColor: "#0f766e", defaultLanguage: "en", cvFileName: "CV", portfolioUrl: "" }, d.settings);
     d.profile = Object.assign({
       name: bi(), shortName: bi(), title: bi(), tagline: bi(), summary: bi(),
       phone: "", whatsapp: "", email: "", location: bi(), photo: "", stats: [], links: []
@@ -289,7 +289,8 @@
             <option value="ar" ${s.defaultLanguage === "ar" ? "selected" : ""}>العربية</option>
           </select></div>
         ${textField("CV file name", "settings.cvFileName")}
-      </div>`, "panel");
+      </div>
+      ${textField("Portfolio link (printed in the CV)", "settings.portfolioUrl", "url", "https://mostafa7799.github.io/dr-ahlam/")}`, "panel");
   }
 
   function renderProfile() {
