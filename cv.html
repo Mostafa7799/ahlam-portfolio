@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CV</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%230f766e%22/%3E%3Ctext x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22 font-weight=%22bold%22%3EA%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/cv.css">
+</head>
+<body>
+  <div class="toolbar">
+    <button class="primary" id="printBtn" type="button">Print / Save as PDF</button>
+    <a href="index.html" id="backLink">Back to portfolio</a>
+  </div>
+  <article class="page" id="cv"></article>
+
+  <script src="assets/js/i18n.js"></script>
+  <script>
+    (function () {
+      const P = window.Portfolio;
+      const params = new URLSearchParams(location.search);
+      const lang = params.get("lang") === "ar" ? "ar" : "en";
+      const cv = document.getElementById("cv");
+      P.applyDir(lang);
+      document.getElementById("printBtn").textContent = P.ui("printCv", lang);
+      document.getElementById("backLink").textContent = P.ui("back", lang);
+      document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+      function render(data) {
+        const p = data.profile || {};
+        const t = (v) => P.tr(v, lang);
+        const name = t(p.name);
+        document.title = name + " - CV";
+
+        const contact = [
+          p.phone && `<span class="ltr">${P.esc(p.phone)}</span>`,
+          p.email && `<span class="ltr">${P.esc(p.email)}</span>`,
+          t(p.location) && `<span>${P.esc(t(p.location))}</span>`
+        ].concat((p.links || []).filter((l) => l.url).map((l) => `<span class="ltr">${P.esc(l.url)}</span>`))
+          .filter(Boolean).join("");
+
+        let html = `<h1>${P.esc(name)}</h1>`;
+        if (t(p.title)) html += `<p class="cv-title">${P.esc(t(p.title))}</p>`;
+        html += `<p class="cv-contact">${contact}</p>`;
+        if (t(p.summary)) html += `<h2>${P.ui("summary", lang)}</h2><p>${P.esc(t(p.summary))}</p>`;
+
+        (data.sections || []).filter((s) => s.visible !== false && (s.items || []).length).forEach((s) => {
+          html += `<h2>${P.esc(t(s.title))}</h2>`;
+          if (P.isTimeline(s.type)) {
+            s.items.forEach((it) => {
+              const org = [t(it.org), t(it.location)].filter(Boolean).join(lang === "ar" ? "، " : ", ");
+              const bullets = (it.bullets || []).map(t).filter(Boolean);
+              const date = P.dateRange(it, lang);
+              html += `<div class="item">
+                <div class="item-head"><span>${P.esc(t(it.title))}</span>${date ? `<span class="date">${P.esc(date)}</span>` : ""}</div>
+                ${org ? `<div class="org">${P.esc(org)}</div>` : ""}
+                ${t(it.description) ? `<p>${P.esc(t(it.description))}</p>` : ""}
+                ${bullets.length ? `<ul>${bullets.map((b) => `<li>${P.esc(b)}</li>`).join("")}</ul>` : ""}
+              </div>`;
+            });
+          } else {
+            const list = s.items.map((it) => {
+              const lvl = t(it.level);
+              return t(it.name) + (lvl ? ` (${lvl})` : "");
+            }).filter(Boolean);
+            html += `<p>${P.esc(list.join(lang === "ar" ? "، " : ", "))}</p>`;
+          }
+        });
+        cv.innerHTML = html;
+
+        if (params.get("print") === "1") {
+          // Wait for the Arabic font so the PDF uses it.
+          (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(() => window.print(), 300));
+        }
+      }
+
+      let preview = null;
+      if (params.get("preview") === "1") {
+        try { preview = JSON.parse(localStorage.getItem("cv-preview-data") || "null"); } catch (e) { /* ignore */ }
+      }
+      if (preview) render(preview);
+      else P.loadData().then(render).catch(() => { cv.textContent = P.ui("loadError", lang); });
+    })();
+  </script>
+</body>
+</html>

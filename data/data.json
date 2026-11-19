@@ -1,0 +1,255 @@
+{
+  "settings": {
+    "themeColor": "#0f766e",
+    "defaultLanguage": "en",
+    "cvFileName": "Ahlam_Abdelwadod_CV"
+  },
+  "profile": {
+    "name": {
+      "en": "Ahlam Ali Ahmed Abdelwadod Mohamed",
+      "ar": "أحلام علي أحمد عبد الودود محمد"
+    },
+    "title": {
+      "en": "Your Job Title",
+      "ar": "المسمى الوظيفي"
+    },
+    "summary": {
+      "en": "Motivated graduate with a strong academic background and a passion for continuous learning. Edit this summary from the admin page to describe your goals, strengths and the kind of role you are looking for.",
+      "ar": "خريجة طموحة ذات خلفية أكاديمية قوية وشغف بالتعلم المستمر. عدّلي هذا الملخص من صفحة الإدارة لوصف أهدافك ونقاط قوتك ونوع الوظيفة التي تبحثين عنها."
+    },
+    "phone": "01102174102",
+    "email": "a.abdelwadod3550@su.edu.eg",
+    "location": {
+      "en": "Elsharqia, Egypt",
+      "ar": "الشرقية، مصر"
+    },
+    "photo": "",
+    "links": [
+      {
+        "label": "LinkedIn",
+        "url": ""
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "education",
+      "type": "education",
+      "visible": true,
+      "title": {
+        "en": "Education",
+        "ar": "التعليم"
+      },
+      "items": [
+        {
+          "title": {
+            "en": "Bachelor's Degree in (Your Major)",
+            "ar": "بكالوريوس في (التخصص)"
+          },
+          "org": {
+            "en": "Your University",
+            "ar": "الجامعة"
+          },
+          "location": {
+            "en": "Egypt",
+            "ar": "مصر"
+          },
+          "start": "09/2021",
+          "end": "06/2025",
+          "description": {
+            "en": "Grade: (Your grade)",
+            "ar": "التقدير: (التقدير)"
+          },
+          "bullets": []
+        }
+      ]
+    },
+    {
+      "id": "experience",
+      "type": "experience",
+      "visible": true,
+      "title": {
+        "en": "Experience",
+        "ar": "الخبرات"
+      },
+      "items": [
+        {
+          "title": {
+            "en": "Intern / Trainee",
+            "ar": "متدربة"
+          },
+          "org": {
+            "en": "Company Name",
+            "ar": "اسم الشركة"
+          },
+          "location": {
+            "en": "Egypt",
+            "ar": "مصر"
+          },
+          "start": "07/2024",
+          "end": "09/2024",
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "bullets": [
+            {
+              "en": "Describe a responsibility or achievement.",
+              "ar": "اكتبي مسؤولية أو إنجازًا."
+            },
+            {
+              "en": "Use numbers where possible (e.g. improved X by 20%).",
+              "ar": "استخدمي الأرقام قدر الإمكان."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "projects",
+      "type": "projects",
+      "visible": true,
+      "title": {
+        "en": "Projects",
+        "ar": "المشاريع"
+      },
+      "items": [
+        {
+          "title": {
+            "en": "Graduation Project",
+            "ar": "مشروع التخرج"
+          },
+          "org": {
+            "en": "",
+            "ar": ""
+          },
+          "location": {
+            "en": "",
+            "ar": ""
+          },
+          "start": "",
+          "end": "06/2025",
+          "description": {
+            "en": "Short description of the project and your role.",
+            "ar": "وصف مختصر للمشروع ودورك فيه."
+          },
+          "bullets": []
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "type": "skills",
+      "visible": true,
+      "title": {
+        "en": "Skills",
+        "ar": "المهارات"
+      },
+      "items": [
+        {
+          "name": {
+            "en": "Microsoft Office",
+            "ar": "مايكروسوفت أوفيس"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Communication",
+            "ar": "التواصل"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Teamwork",
+            "ar": "العمل الجماعي"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        },
+        {
+          "name": {
+            "en": "Problem Solving",
+            "ar": "حل المشكلات"
+          },
+          "level": {
+            "en": "",
+            "ar": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "certificates",
+      "type": "certificates",
+      "visible": true,
+      "title": {
+        "en": "Certifications",
+        "ar": "الشهادات"
+      },
+      "items": [
+        {
+          "title": {
+            "en": "Certificate Name",
+            "ar": "اسم الشهادة"
+          },
+          "org": {
+            "en": "Issuer",
+            "ar": "الجهة المانحة"
+          },
+          "location": {
+            "en": "",
+            "ar": ""
+          },
+          "start": "",
+          "end": "2024",
+          "description": {
+            "en": "",
+            "ar": ""
+          },
+          "bullets": []
+        }
+      ]
+    },
+    {
+      "id": "languages",
+      "type": "languages",
+      "visible": true,
+      "title": {
+        "en": "Languages",
+        "ar": "اللغات"
+      },
+      "items": [
+        {
+          "name": {
+            "en": "Arabic",
+            "ar": "العربية"
+          },
+          "level": {
+            "en": "Native",
+            "ar": "اللغة الأم"
+          }
+        },
+        {
+          "name": {
+            "en": "English",
+            "ar": "الإنجليزية"
+          },
+          "level": {
+            "en": "Very Good",
+            "ar": "جيد جدًا"
+          }
+        }
+      ]
+    }
+  ]
+}
