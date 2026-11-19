@@ -21,14 +21,17 @@ html[lang="ar"] body { font-family: "Cairo", Tahoma, Arial, sans-serif; }
   width: 210mm; max-width: calc(100% - 32px); min-height: 297mm; margin: 0 auto 32px;
   background: #fff; padding: 18mm; box-shadow: 0 2px 12px rgba(0, 0, 0, .12);
 }
-h1 { font-size: 20pt; margin: 0; line-height: 1.2; }
-.cv-title { font-size: 12pt; color: var(--muted); margin: 2px 0 4px; }
+h1 { font-size: 20pt; margin: 0; line-height: 1.2; text-align: center; }
+.cv-title { font-size: 12pt; color: var(--muted); margin: 2px 0 6px; text-align: center; }
 .cv-contact { color: var(--muted); margin: 0; font-size: 10pt; }
-.cv-contact span + span::before { content: "  |  "; }
 .cv-contact a { color: #0e7c86; text-decoration: none; }
 .cv-title { color: #0e7c86; }
 h1 { color: #0f2a3d; }
-.cv-contact { padding-bottom: 8px; border-bottom: 2px solid #0e7c86; line-height: 1.7; }
+.cv-contact {
+  padding-bottom: 8px; border-bottom: 2px solid #0e7c86; line-height: 1.7; font-size: 9.5pt;
+  display: flex; flex-wrap: wrap; justify-content: center; white-space: nowrap;
+}
+.cv-contact span + span::before { content: "|"; margin: 0 8px; color: #9aa5ae; }
 html[lang="en"] .org { font-style: italic; }
 h2 {
   font-size: 11pt; text-transform: uppercase; margin: 14px 0 6px; padding-bottom: 3px;

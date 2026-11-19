@@ -136,54 +136,63 @@
       y += 3.2;
     }
 
-    // Text segments on one line, separated by " | ", wrapping when needed; segments with a
-    // link are clickable but stay plain readable text.
-    function contactLine(segments, size) {
-      const lh = lineH(size);
-      const sep = "  |  ";
-      font(size, "normal", GREY);
-      let x = ML;
-      ensure(lh);
-      segments.forEach((seg, i) => {
-        const label = (seg.label ? seg.label + ": " : "") + seg.text;
-        const w = doc.getTextWidth(label);
-        const sw = i ? doc.getTextWidth(sep) : 0;
-        if (i && x + sw + w > ML + W) { y += lh; x = ML; }
-        else if (i) { doc.text(sep, x, y + lh * 0.78); x += sw; }
-        if (seg.label) {
-          font(size, "bold", GREY);
-          doc.text(seg.label + ": ", x, y + lh * 0.78);
-          x += doc.getTextWidth(seg.label + ": ");
-          font(size, "normal", seg.url ? ACCENT : GREY);
-        } else {
-          font(size, "normal", seg.url ? ACCENT : GREY);
-        }
-        doc.text(seg.text, x, y + lh * 0.78);
-        if (seg.url) doc.link(x, y, doc.getTextWidth(seg.text), lh, { url: seg.url });
-        x += doc.getTextWidth(seg.text);
-        font(size, "normal", GREY);
+    // Contact details as one centred line of " | "-separated text. The font shrinks a little
+    // to keep everything on one line; only if it still can't fit does it wrap onto a second
+    // centred line. Linked segments are clickable but remain plain, readable text.
+    function contactBlock(segments) {
+      const SEP = "  |  ";
+      const segWidth = (seg) => {
+        let w = 0;
+        if (seg.label) { font(size, "bold"); w += doc.getTextWidth(seg.label + ": "); }
+        font(size, "normal");
+        return w + doc.getTextWidth(seg.text);
+      };
+      const lineWidth = (line) => { font(size, "normal"); return line.reduce((w, seg, i) => w + segWidth(seg) + (i ? doc.getTextWidth(SEP) : 0), 0); };
+
+      let size = 9.5;
+      while (size > 8 && lineWidth(segments) > W) size -= 0.25;
+      const lines = [[]];
+      segments.forEach((seg) => {
+        const cur = lines[lines.length - 1];
+        if (cur.length && lineWidth(cur.concat(seg)) > W) lines.push([seg]); else cur.push(seg);
       });
-      y += lh;
+
+      const lh = lineH(size);
+      lines.forEach((line) => {
+        let x = ML + (W - lineWidth(line)) / 2;
+        const base = y + lh * 0.78;
+        line.forEach((seg, i) => {
+          if (i) { font(size, "normal", GREY); doc.text(SEP, x, base); x += doc.getTextWidth(SEP); }
+          if (seg.label) {
+            font(size, "bold", GREY);
+            doc.text(seg.label + ": ", x, base);
+            x += doc.getTextWidth(seg.label + ": ");
+          }
+          font(size, "normal", seg.url ? ACCENT : GREY);
+          doc.text(seg.text, x, base);
+          if (seg.url) doc.link(x, y, doc.getTextWidth(seg.text), lh, { url: seg.url });
+          x += doc.getTextWidth(seg.text);
+        });
+        y += lh;
+      });
     }
 
-    // ---------- header ----------
+    // ---------- header (centred) ----------
+    const CX = ML + W / 2;
     font(22, "bold", NAVY);
-    doc.splitTextToSize(name, W).forEach((line) => { doc.text(line, ML, y + 7.2); y += 9; });
-    if (en(p.title)) { font(12.5, "normal", ACCENT); doc.text(en(p.title), ML, y + 4.4); y += 7; }
+    doc.splitTextToSize(name, W).forEach((line) => { doc.text(line, CX, y + 7.2, { align: "center" }); y += 9; });
+    if (en(p.title)) { font(12.5, "normal", ACCENT); doc.text(en(p.title), CX, y + 4.4, { align: "center" }); y += 7; }
 
     const phone = clean(p.phone), email = clean(p.email), loc = en(p.location);
-    const line1 = [];
-    if (phone) line1.push(intlPhone(phone));
-    if (email) line1.push({ text: email, url: "mailto:" + email });
-    if (loc) line1.push({ text: loc });
-    if (line1.length) contactLine(line1, 9.5);
-
-    const line2 = [];
-    if (url) line2.push({ label: "Portfolio", text: shortUrl(url), url });
+    const contact = [];
+    if (phone) contact.push(intlPhone(phone));
+    if (email) contact.push({ text: email, url: "mailto:" + email });
+    if (loc) contact.push({ text: loc });
+    if (url) contact.push({ label: "Portfolio", text: shortUrl(url), url });
     (p.links || []).filter((l) => clean(l.url)).forEach((l) => {
-      line2.push({ label: clean(l.label) || "Link", text: shortUrl(clean(l.url)), url: clean(l.url) });
+      contact.push({ label: clean(l.label) || "Link", text: shortUrl(clean(l.url)), url: clean(l.url) });
     });
-    if (line2.length) { y += 0.6; contactLine(line2, 9.5); }
+    if (contact.length) contactBlock(contact);
 
     y += 2.5;
     doc.setDrawColor.apply(doc, ACCENT);
